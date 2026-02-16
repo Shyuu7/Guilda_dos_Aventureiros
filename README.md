@@ -29,7 +29,7 @@ Com o aumento das expedições e o surgimento de novas ameaças, o Conselho da G
 
 ## Tecnologias Utilizadas
 
-- **Java 17**
+- **Java 21**
 - **Spring Boot**
 - **Spring Web** - Controllers REST
 - **Spring Validation** - Validações customizadas
@@ -145,7 +145,7 @@ X-Total-Pages: 15
 
 ## Como Executar
 
-1. Certifique-se de ter Java 17+ e Maven instalados
+1. Certifique-se de ter Java 21+ e Maven instalados
 2. Clone o repositório
 3. Execute:
 ```bash
