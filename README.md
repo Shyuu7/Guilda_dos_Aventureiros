@@ -111,12 +111,12 @@ PUT /aventureiros/1/recrutar
 
 ## Classes Permitidas
 
-- `WARRIOR` - Guerreiro
-- `MAGE` - Mago
-- `RANGER` - Batedor
-- `ROGUE` - Ladino
-- `CLERIC` - Clérigo
-
+- `GUERREIRO`
+- `MAGO`
+- `ARQUEIRO`
+- `CLERIGO`
+- `LADINO`
+- 
 ## Regras de Negócio
 
 ### Registro
