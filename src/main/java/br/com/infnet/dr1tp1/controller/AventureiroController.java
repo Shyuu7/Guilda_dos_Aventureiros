@@ -1,61 +1,61 @@
 package br.com.infnet.dr1tp1.controller;
 
-import br.com.infnet.dr1tp1.dto.AventureiroDTO;
-import br.com.infnet.dr1tp1.dto.AventureiroResumoDTO;
-import br.com.infnet.dr1tp1.enums.Classes;
-import br.com.infnet.dr1tp1.records.AventureiroRecord;
+import br.com.infnet.dr1tp1.domain.Aventureiro;
+import br.com.infnet.dr1tp1.dto.AventureiroCriacaoRequest;
+import br.com.infnet.dr1tp1.dto.AventureiroResumoResponse;
+import br.com.infnet.dr1tp1.dto.AventureiroResponse;
+import br.com.infnet.dr1tp1.dto.AventureiroAtualizacaoRequest;
+import br.com.infnet.dr1tp1.mapper.AventureiroMapper;
 import br.com.infnet.dr1tp1.service.AventureiroService;
-import br.com.infnet.dr1tp1.validation.AventureiroValidator;
+import br.com.infnet.dr1tp1.enums.Classes;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import jakarta.validation.constraints.Positive;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/aventureiros")
-@Validated
 public class AventureiroController {
-
     private final AventureiroService aventureiroService;
+    private final AventureiroMapper aventureiroMapper;
 
-    public AventureiroController(AventureiroService aventureiroService) {
-        this.aventureiroService = aventureiroService;
-    }
-
-    //=====================
-    // CRIAR AVENTUREIRO
-    // [POST]
-    //=====================
     @PostMapping
-    public ResponseEntity<AventureiroDTO> registrarAventureiro(@RequestBody AventureiroRecord request) {
-        AventureiroValidator.validateRecordAndThrow(request);
-
-        AventureiroDTO aventureiro = aventureiroService.registrarAventureiro(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(aventureiro);
+    public ResponseEntity<AventureiroResponse> criarAventureiro(
+            @Valid @RequestBody AventureiroCriacaoRequest request) {
+        Aventureiro aventureiro = aventureiroMapper.toEntity(request);
+        Aventureiro salvoNoRepo = aventureiroService.criarAventureiro(aventureiro);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(aventureiroMapper.toResponse(salvoNoRepo));
     }
 
-    //=====================
-    // LISTAR AVENTUREIROS
-    // [GET] com filtros e paginação
-    //=====================
     @GetMapping
-    public ResponseEntity<List<AventureiroResumoDTO>> listarAventureiros(
+    public ResponseEntity<List<AventureiroResumoResponse>> listarAventureiros(
             @RequestParam(required = false) Classes classe,
             @RequestParam(required = false) Boolean ativo,
             @RequestParam(required = false) Integer nivelMinimo,
-            @RequestHeader(value = "X-Page", defaultValue = "0") int page,
-            @RequestHeader(value = "X-Size", defaultValue = "10") int size) {
+            @RequestHeader(value = "X-Page", defaultValue = "0") @Min(value = 0, message = "O número da página deve ser maior ou igual a 0") int page,
+            @RequestHeader(value = "X-Size", defaultValue = "10") @Range(min = 1, max = 50, message = "Apenas é permitido listar até 50 aventureiros por vez")
+            int size
+    ) {
 
-        AventureiroValidator.validatePagination(page, size);
-
-        List<AventureiroResumoDTO> aventureiros = aventureiroService.listarComFiltros(classe, ativo, nivelMinimo, page, size);
-        long totalCount = aventureiroService.contarComFiltros(classe, ativo, nivelMinimo);
+        List<AventureiroResumoResponse> aventureiros = aventureiroService.listarComFiltros(classe, ativo, nivelMinimo, page, size);
+        long totalCount = aventureiroService.contarAventureirosComFiltros(classe, ativo, nivelMinimo);
         int totalPages = (int) Math.ceil((double) totalCount / size);
-
-        return ResponseEntity.status(HttpStatus.OK)
+        if (page >= totalPages && totalCount > 0) {
+            return ResponseEntity.ok()
+                    .header("X-Page", String.valueOf(page))
+                    .header("X-Size", String.valueOf(size))
+                    .header("X-Total-Count", String.valueOf(totalCount))
+                    .header("X-Total-Pages", String.valueOf(totalPages))
+                    .body(List.of());
+        }
+        return ResponseEntity.ok()
                 .header("X-Page", String.valueOf(page))
                 .header("X-Size", String.valueOf(size))
                 .header("X-Total-Count", String.valueOf(totalCount))
@@ -63,52 +63,30 @@ public class AventureiroController {
                 .body(aventureiros);
     }
 
-    //=====================
-    // CONSULTAR POR ID
-    // [GET]
-    // /aventureiros/1
-    //=====================
-    @GetMapping("/{id}")
-    public ResponseEntity<?> consultarPorId(@Positive @PathVariable Long id) {
-        AventureiroDTO aventureiro = aventureiroService.consultarPorId(id);
-        return ResponseEntity.status(HttpStatus.OK).body(aventureiro);
+    @GetMapping(value ="/{id}")
+    public ResponseEntity<AventureiroResponse> buscarAventureiro(@PathVariable Long id) {
+        AventureiroResponse response = aventureiroService.buscarPorId(id);
+        return ResponseEntity.ok(response);
     }
 
-    //=====================
-    // ATUALIZAR AVENTUREIRO
-    // [PUT]
-    // /aventureiros/1
-    //=====================
-    @PutMapping("/{id}")
-    public ResponseEntity<AventureiroDTO> atualizarAventureiro(
-            @Positive @PathVariable Long id,
-            @RequestBody AventureiroDTO request) {
-
-        AventureiroValidator.validateDTOAndThrow(request);
-
-        AventureiroDTO aventureiro = aventureiroService.atualizarAventureiro(id, request);
-        return ResponseEntity.status(HttpStatus.OK).body(aventureiro);
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<AventureiroResponse> atualizarAventureiro(
+            @PathVariable Long id,
+            @Valid @RequestBody AventureiroAtualizacaoRequest request) {
+        Aventureiro aventureiro = aventureiroService.atualizarAventureiro(id, request);
+        return ResponseEntity.ok(aventureiroMapper.toResponse(aventureiro));
     }
 
-    //=====================
-    // ENCERRAR VÍNCULO
-    // [PUT]
-    // /aventureiros/1/encerrar
-    //=====================
-    @PutMapping("/{id}/encerrar")
-    public ResponseEntity<AventureiroDTO> encerrarVinculo(@Positive @PathVariable Long id) {
-        AventureiroDTO aventureiro = aventureiroService.alterarStatusAtivo(id, false);
-        return ResponseEntity.status(HttpStatus.OK).body(aventureiro);
+    @PatchMapping("/{id}/desativar")
+    public ResponseEntity<Void> desativarAventureiro(@PathVariable Long id) {
+        aventureiroService.encerrarVinculo(id);
+        return ResponseEntity.ok().build();
     }
 
-    //=====================
-    // RECRUTAR NOVAMENTE
-    // [PUT]
-    // /aventureiros/1/recrutar
-    //=====================
-    @PutMapping("/{id}/recrutar")
-    public ResponseEntity<AventureiroDTO> recrutarNovamente(@Positive @PathVariable Long id) {
-        AventureiroDTO aventureiro = aventureiroService.alterarStatusAtivo(id, true);
-        return ResponseEntity.status(HttpStatus.OK).body(aventureiro);
+
+    @PatchMapping("/{id}/reativar")
+    public ResponseEntity<Void> reativarAventureiro(@PathVariable Long id) {
+        aventureiroService.recrutarAventureiro(id);
+        return ResponseEntity.noContent().build();
     }
 }

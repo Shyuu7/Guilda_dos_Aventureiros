@@ -1,4 +1,4 @@
-package br.com.infnet.dr1tp1.model;
+package br.com.infnet.dr1tp1.domain;
 
 import br.com.infnet.dr1tp1.enums.Especies;
 import lombok.Getter;
@@ -14,6 +14,6 @@ public class Companheiro {
     public Companheiro(String nome, Especies especie, int lealdade) {
         this.nome = nome;
         this.especie = especie;
-        setLealdade(lealdade);
+        this.lealdade = lealdade;
     }
 }

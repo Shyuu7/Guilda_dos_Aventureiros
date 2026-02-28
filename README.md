@@ -29,7 +29,7 @@ Com o aumento das expedições e o surgimento de novas ameaças, o Conselho da G
 
 ## Tecnologias Utilizadas
 
-- **Java 21**
+- **Java 25**
 - **Spring Boot**
 - **Spring Web** - Controllers REST
 - **Spring Validation** - Validações customizadas
@@ -37,27 +37,9 @@ Com o aumento das expedições e o surgimento de novas ameaças, o Conselho da G
 
 ## Estrutura do Projeto
 
+Em breve
 ```
-src/main/java/br/com/infnet/dr1tp1/
-├── controller/
-│   └── AventureiroController.java
-├── dto/
-│   ├── AventureiroDTO.java
-│   ├── AventureiroResumoDTO.java
-│   └── CompanheiroDTO.java
-├── enums/
-│   └── Classes.java
-├── exception/
-│   └── AventureiroNotFoundException.java
-├── model/
-│   ├── Aventureiro.java
-│   └── Companheiro.java
-├── repository/
-│   └── AventureiroRepository.java
-├── service/
-│   └── AventureiroService.java
-└── validation/
-    └── AventureiroValidator.java
+
 ```
 
 ## Endpoints da API
@@ -89,7 +71,7 @@ GET /aventureiros/1
 
 ### Atualizar Aventureiro
 ```http
-PUT /aventureiros/1
+PATCH /aventureiros/1
 Content-Type: application/json
 
 {

@@ -1,124 +1,61 @@
 package br.com.infnet.dr1tp1.repository;
 
+import br.com.infnet.dr1tp1.domain.Aventureiro;
 import br.com.infnet.dr1tp1.enums.Classes;
-import br.com.infnet.dr1tp1.enums.Especies;
-import br.com.infnet.dr1tp1.exception.AventureiroNotFoundException;
-import br.com.infnet.dr1tp1.model.Aventureiro;
-import br.com.infnet.dr1tp1.model.Companheiro;
-import br.com.infnet.dr1tp1.validation.AventureiroValidator;
-import br.com.infnet.dr1tp1.validation.CompanheiroValidator;
+import br.com.infnet.dr1tp1.exceptions.EntityNotFoundException;
 import com.github.javafaker.Faker;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.LongStream;
 
 @Repository
 public class AventureiroRepository {
+    private final List<Aventureiro> aventureiros;
 
-    private static final int QUANTIDADE_AVENTUREIROS = 100;
-    private static final double CHANCE_TER_COMPANHEIRO = 0.5;
-    private static final int NIVEL_MINIMO = 1;
-    private static final int NIVEL_MAXIMO = 20;
-    private static final int LEALDADE_MINIMA = 0;
-    private static final int LEALDADE_MAXIMA = 100;
-
-    private final List<Aventureiro> aventureiros = new ArrayList<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
-    private final Faker faker = new Faker();
-    private final Random random = new Random();
-
-    public AventureiroRepository() {
-        inicializarDados();
+    public AventureiroRepository(List<Aventureiro> aventureiros) {
+        this.aventureiros = aventureiros;
     }
 
-    private void inicializarDados() {
-        Classes[] classes = Classes.values();
-        Especies[] especies = Especies.values();
-
-        IntStream.range(0, QUANTIDADE_AVENTUREIROS)
-                .mapToObj(i -> criarAventureiro(classes, especies))
-                .forEach(aventureiros::add);
+    public void carregarAventureiros(){
+        Faker faker = new Faker();
+        aventureiros.addAll(initRepo(faker));
     }
 
-    private Aventureiro criarAventureiro(Classes[] classes, Especies[] especies) {
-        String nome = gerarNomeAventureiro();
-        Classes classe = classes[random.nextInt(classes.length)];
-        int nivel = faker.number().numberBetween(NIVEL_MINIMO, NIVEL_MAXIMO + 1);
-        AventureiroValidator.validateForCreationAndThrow(nome, classe, nivel);
-
-        Aventureiro aventureiro = new Aventureiro();
-        aventureiro.setId(idGenerator.getAndIncrement());
-        aventureiro.setNome(nome);
-        aventureiro.setClasse(classe);
-        aventureiro.setNivel(nivel);
-        aventureiro.setAtivo(true);
-
-        if (random.nextDouble() < CHANCE_TER_COMPANHEIRO) {
-            aventureiro.setCompanheiro(criarCompanheiro(especies));
-        } else {
-            aventureiro.setCompanheiro(null);
-        }
-
-        return aventureiro;
-    }
-
-    private String gerarNomeAventureiro() {
-        return switch (random.nextInt(3)) {
-            case 0 -> faker.name().firstName() + " " + faker.ancient().hero();
-            case 1 -> faker.ancient().god() + " " + faker.name().lastName();
-            default -> faker.superhero().name();
-        };
-    }
-
-    private Companheiro criarCompanheiro(Especies[] especies) {
-        String nomeCompanheiro = switch (random.nextInt(4)) {
-            case 0 -> faker.animal().name();
-            case 1 -> faker.cat().name();
-            case 2 -> faker.dog().name();
-            default -> faker.funnyName().name();
-        };
-
-        Especies especie = especies[random.nextInt(especies.length)];
-        int lealdade = faker.number().numberBetween(LEALDADE_MINIMA, LEALDADE_MAXIMA + 1);
-        CompanheiroValidator.validateForCreationAndThrow(nomeCompanheiro, especie, lealdade);
-
-        return new Companheiro(nomeCompanheiro, especie, lealdade);
-    }
-
-    public Aventureiro save(Aventureiro aventureiro) {
-        AventureiroValidator.validateAndThrow(aventureiro);
-        if (aventureiro.getCompanheiro() != null && aventureiro.getCompanheiro().isPresent()) {
-            CompanheiroValidator.validateAndThrow(aventureiro.getCompanheiro().get());
-        }
-
-        if (aventureiro.getId() == null || aventureiro.getId() == 0) {
-            aventureiro.setId(idGenerator.getAndIncrement());
-            aventureiros.add(aventureiro);
-        } else {
-            updateExisting(aventureiro);
-        }
-        return aventureiro;
-    }
-
-    private void updateExisting(Aventureiro aventureiro) {
-        for (int i = 0; i < aventureiros.size(); i++) {
-            if (Objects.equals(aventureiros.get(i).getId(), aventureiro.getId())) {
-                aventureiros.set(i, aventureiro);
-                return;
-            }
-        }
-        throw new AventureiroNotFoundException(aventureiro.getId());
+    private List<Aventureiro> initRepo(Faker faker){
+        return LongStream.rangeClosed(1,100)
+                .mapToObj(i -> new Aventureiro(
+                        faker.elderScrolls().firstName() + " " + faker.elderScrolls().lastName(),
+                        Classes.values()[new Random().nextInt(Classes.values().length)],
+                        faker.number().numberBetween(1, 1000)))
+                .toList();
     }
 
     public List<Aventureiro> findAll() {
         return new ArrayList<>(aventureiros);
     }
 
-    public Optional<Aventureiro> findById(Long id) {
+    public Aventureiro salvarAventureiro(Aventureiro aventureiro) {
+        aventureiros.add(aventureiro);
+        return aventureiro;
+    }
+
+    public Aventureiro buscarPorId(Long id){
         return aventureiros.stream()
-                .filter(a -> Objects.equals(a.getId(), id))
-                .findFirst();
+                .filter(a -> a.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
+    }
+
+    public void reativarAventureiro(Long id) {
+        Aventureiro aventureiro = buscarPorId(id);
+        aventureiro.recrutar();
+    }
+
+    public void desativarAventureiro(Long id) {
+        Aventureiro aventureiro = buscarPorId(id);
+        aventureiro.encerrarVinculo();
     }
 }
