@@ -1,10 +1,7 @@
 package br.com.infnet.dr1tp1.controller;
 
 import br.com.infnet.dr1tp1.domain.Aventureiro;
-import br.com.infnet.dr1tp1.dto.AventureiroCriacaoRequest;
-import br.com.infnet.dr1tp1.dto.AventureiroResumoResponse;
-import br.com.infnet.dr1tp1.dto.AventureiroResponse;
-import br.com.infnet.dr1tp1.dto.AventureiroAtualizacaoRequest;
+import br.com.infnet.dr1tp1.dto.*;
 import br.com.infnet.dr1tp1.mapper.AventureiroMapper;
 import br.com.infnet.dr1tp1.service.AventureiroService;
 import br.com.infnet.dr1tp1.enums.Classes;
@@ -39,8 +36,11 @@ public class AventureiroController {
             @RequestParam(required = false) Classes classe,
             @RequestParam(required = false) Boolean ativo,
             @RequestParam(required = false) Integer nivelMinimo,
-            @RequestHeader(value = "X-Page", defaultValue = "0") @Min(value = 0, message = "O número da página deve ser maior ou igual a 0") int page,
-            @RequestHeader(value = "X-Size", defaultValue = "10") @Range(min = 1, max = 50, message = "Apenas é permitido listar até 50 aventureiros por vez")
+            @RequestHeader(value = "X-Page", defaultValue = "0")
+            @Min(value = 0, message = "O número da página deve ser maior ou igual a 0")
+            int page,
+            @RequestHeader(value = "X-Size", defaultValue = "10")
+            @Range(min = 1, max = 50, message = "Apenas é permitido listar até 50 aventureiros por vez")
             int size
     ) {
 
@@ -88,4 +88,22 @@ public class AventureiroController {
         aventureiroService.recrutarAventureiro(id);
         return ResponseEntity.noContent().build();
     }
+
+    // GERENCIAMENTO DE COMPANHEIROS
+
+    @PostMapping("/{id}/companheiro")
+    public ResponseEntity<AventureiroResponse> invocarCompanheiro(
+            @PathVariable Long id,
+            @Valid @RequestBody CompanheiroCriacaoRequest request) {
+        aventureiroService.invocarCompanheiro(id, request.nome(), request.especie(), request.lealdade());
+        AventureiroResponse response = aventureiroService.buscarPorId(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}/companheiro")
+    public ResponseEntity<Void> banirCompanheiro(@PathVariable Long id) {
+        aventureiroService.banirCompanheiro(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
