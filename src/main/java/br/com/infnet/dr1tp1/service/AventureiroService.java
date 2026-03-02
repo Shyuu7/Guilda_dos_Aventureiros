@@ -1,15 +1,19 @@
 package br.com.infnet.dr1tp1.service;
 
+import br.com.infnet.dr1tp1.domain.Companheiro;
 import br.com.infnet.dr1tp1.dto.AventureiroAtualizacaoRequest;
 import br.com.infnet.dr1tp1.dto.AventureiroResponse;
 import br.com.infnet.dr1tp1.dto.AventureiroResumoResponse;
 import br.com.infnet.dr1tp1.domain.Aventureiro;
 import br.com.infnet.dr1tp1.enums.Classes;
+import br.com.infnet.dr1tp1.enums.Especies;
+import br.com.infnet.dr1tp1.exceptions.EntityNotFoundException;
 import br.com.infnet.dr1tp1.mapper.AventureiroMapper;
 import br.com.infnet.dr1tp1.repository.AventureiroRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -76,14 +80,29 @@ public class AventureiroService {
         return aventureiroExistente;
     }
 
-
-
     public void encerrarVinculo(Long id) {
         aventureiroRepository.desativarAventureiro(id);
     }
 
     public void recrutarAventureiro(Long id) {
         aventureiroRepository.reativarAventureiro(id);
+    }
+
+    public void invocarCompanheiro(Long idAventureiro, String nomeCompanheiro, Especies especie, int lealdade) {
+        Aventureiro aventureiro = aventureiroRepository.buscarPorId(idAventureiro);
+        if (!aventureiro.isAtivo() || aventureiro.getId() == null) {
+            throw new EntityNotFoundException("O aventureiro não encontrado.");
+        }
+        Companheiro novoCompanheiro = new Companheiro(nomeCompanheiro, especie, lealdade);
+        aventureiro.setCompanheiro(Optional.of(novoCompanheiro));
+    }
+
+    public void banirCompanheiro(Long idAventureiro) {
+        Aventureiro aventureiro = aventureiroRepository.buscarPorId(idAventureiro);
+        if (!aventureiro.isAtivo() || aventureiro.getId() == null) {
+            throw new EntityNotFoundException("O aventureiro não encontrado.");
+        }
+        aventureiro.setCompanheiro(Optional.empty());
     }
 
     private List<Aventureiro> paginar(List<Aventureiro> aventureiros, int page, int size) {
@@ -103,4 +122,5 @@ public class AventureiroService {
                 aventureiro.getClasse(),
                 aventureiro.getNivel());
     }
+
 }
