@@ -1,6 +1,7 @@
 package br.com.infnet.dr1tp1.mapper;
 
 import br.com.infnet.dr1tp1.domain.Aventureiro;
+import br.com.infnet.dr1tp1.dto.AventureiroAtualizacaoRequest;
 import br.com.infnet.dr1tp1.dto.AventureiroCriacaoRequest;
 import br.com.infnet.dr1tp1.dto.AventureiroResponse;
 import org.springframework.stereotype.Component;
@@ -13,14 +14,6 @@ public class AventureiroMapper {
                 request.nome(),
                 request.classe(),
                 request.nivel()
-        );
-    }
-
-    public Aventureiro toEntity(AventureiroResponse response) {
-        return new Aventureiro(
-                response.nome(),
-                response.classe(),
-                response.nivel()
         );
     }
 

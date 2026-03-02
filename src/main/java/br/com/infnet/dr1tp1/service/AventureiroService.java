@@ -5,6 +5,7 @@ import br.com.infnet.dr1tp1.dto.AventureiroResponse;
 import br.com.infnet.dr1tp1.dto.AventureiroResumoResponse;
 import br.com.infnet.dr1tp1.domain.Aventureiro;
 import br.com.infnet.dr1tp1.enums.Classes;
+import br.com.infnet.dr1tp1.mapper.AventureiroMapper;
 import br.com.infnet.dr1tp1.repository.AventureiroRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class AventureiroService {
     private final AventureiroRepository aventureiroRepository;
     private final AtomicLong idGenerator = new AtomicLong(101);
+    private final AventureiroMapper aventureiroMapper = new AventureiroMapper();
 
     public AventureiroService(AventureiroRepository aventureiroRepository) {
         this.aventureiroRepository = aventureiroRepository;
@@ -33,7 +35,7 @@ public class AventureiroService {
 
    public List<AventureiroResumoResponse> listarComFiltros (Classes classe, Boolean ativo, Integer nivelMinimo, int page, int size) {
         List <Aventureiro> todos = aventureiroRepository.findAll();
-        List<Aventureiro> filtrados = todos.stream()
+        List <Aventureiro> filtrados = todos.stream()
                 .filter(a -> classe == null || a.getClasse().equals(classe))
                 .filter(a -> ativo == null || a.isAtivo() == ativo)
                 .filter(a -> nivelMinimo == null || a.getNivel() >= nivelMinimo)
@@ -67,15 +69,14 @@ public class AventureiroService {
     }
 
     public Aventureiro atualizarAventureiro(Long id, AventureiroAtualizacaoRequest request) {
-        Aventureiro aventureiro = aventureiroRepository.buscarPorId(id);
-        if (!aventureiro.isAtivo()) {;
-            throw new IllegalStateException("Não é possível atualizar um aventureiro inativo");
-        }
-        aventureiro.setNome(request.nome());
-        aventureiro.setClasse(request.classe());
-        aventureiro.setNivel(request.nivel());
-        return aventureiroRepository.salvarAventureiro(aventureiro);
+        Aventureiro aventureiroExistente = aventureiroRepository.buscarPorId(id);
+        aventureiroExistente.setNome(request.nome());
+        aventureiroExistente.setClasse(request.classe());
+        aventureiroExistente.setNivel(request.nivel());
+        return aventureiroExistente;
     }
+
+
 
     public void encerrarVinculo(Long id) {
         aventureiroRepository.desativarAventureiro(id);

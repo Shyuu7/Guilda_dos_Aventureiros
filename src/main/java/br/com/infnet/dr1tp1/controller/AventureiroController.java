@@ -63,13 +63,13 @@ public class AventureiroController {
                 .body(aventureiros);
     }
 
-    @GetMapping(value ="/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<AventureiroResponse> buscarAventureiro(@PathVariable Long id) {
         AventureiroResponse response = aventureiroService.buscarPorId(id);
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping(value = "/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<AventureiroResponse> atualizarAventureiro(
             @PathVariable Long id,
             @Valid @RequestBody AventureiroAtualizacaoRequest request) {
@@ -82,7 +82,6 @@ public class AventureiroController {
         aventureiroService.encerrarVinculo(id);
         return ResponseEntity.ok().build();
     }
-
 
     @PatchMapping("/{id}/reativar")
     public ResponseEntity<Void> reativarAventureiro(@PathVariable Long id) {

@@ -13,11 +13,7 @@ import java.util.stream.LongStream;
 
 @Repository
 public class AventureiroRepository {
-    private final List<Aventureiro> aventureiros;
-
-    public AventureiroRepository(List<Aventureiro> aventureiros) {
-        this.aventureiros = aventureiros;
-    }
+    private final List<Aventureiro> aventureiros = new ArrayList<>();
 
     public void carregarAventureiros(){
         Faker faker = new Faker();
@@ -34,12 +30,11 @@ public class AventureiroRepository {
     }
 
     public List<Aventureiro> findAll() {
-        return new ArrayList<>(aventureiros);
+        return List.copyOf(aventureiros);
     }
 
-    public Aventureiro salvarAventureiro(Aventureiro aventureiro) {
+    public void salvarAventureiro(Aventureiro aventureiro) {
         aventureiros.add(aventureiro);
-        return aventureiro;
     }
 
     public Aventureiro buscarPorId(Long id){
