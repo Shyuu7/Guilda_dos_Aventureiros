@@ -32,7 +32,7 @@ public class AventureiroController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AventureiroResumoResponse>> listarAventureiros(
+    public ResponseEntity<List<AventureiroResumoResponse>> listarAventureirosComFiltro(
             @RequestParam(required = false) Classes classe,
             @RequestParam(required = false) Boolean ativo,
             @RequestParam(required = false) Integer nivelMinimo,
@@ -43,7 +43,6 @@ public class AventureiroController {
             @Range(min = 1, max = 50, message = "Apenas é permitido listar até 50 aventureiros por vez")
             int size
     ) {
-
         List<AventureiroResumoResponse> aventureiros = aventureiroService.listarComFiltros(classe, ativo, nivelMinimo, page, size);
         long totalCount = aventureiroService.contarAventureirosComFiltros(classe, ativo, nivelMinimo);
         int totalPages = (int) Math.ceil((double) totalCount / size);
@@ -82,7 +81,6 @@ public class AventureiroController {
     }
 
     // GERENCIAMENTO DE COMPANHEIROS
-
     @PostMapping("/{id}/companheiro")
     public ResponseEntity<AventureiroResponse> invocarCompanheiro(
             @PathVariable Long id,
