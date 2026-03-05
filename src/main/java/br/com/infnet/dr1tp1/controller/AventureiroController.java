@@ -47,14 +47,6 @@ public class AventureiroController {
         List<AventureiroResumoResponse> aventureiros = aventureiroService.listarComFiltros(classe, ativo, nivelMinimo, page, size);
         long totalCount = aventureiroService.contarAventureirosComFiltros(classe, ativo, nivelMinimo);
         int totalPages = (int) Math.ceil((double) totalCount / size);
-        if (page >= totalPages && totalCount > 0) {
-            return ResponseEntity.ok()
-                    .header("X-Page", String.valueOf(page))
-                    .header("X-Size", String.valueOf(size))
-                    .header("X-Total-Count", String.valueOf(totalCount))
-                    .header("X-Total-Pages", String.valueOf(totalPages))
-                    .body(List.of());
-        }
         return ResponseEntity.ok()
                 .header("X-Page", String.valueOf(page))
                 .header("X-Size", String.valueOf(size))
