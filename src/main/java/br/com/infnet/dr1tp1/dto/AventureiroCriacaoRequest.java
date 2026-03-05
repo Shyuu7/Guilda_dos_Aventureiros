@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
 public record AventureiroCriacaoRequest(
+        Long id,
         @NotBlank (message = "Nome é obrigatório e não pode estar em branco")
         String nome,
         @Valid Classes classe,

@@ -22,10 +22,15 @@ public class AventureiroRepository {
 
     private List<Aventureiro> initRepo(Faker faker){
         return LongStream.rangeClosed(1,100)
-                .mapToObj(i -> new Aventureiro(
-                        faker.elderScrolls().firstName() + " " + faker.elderScrolls().lastName(),
-                        Classes.values()[new Random().nextInt(Classes.values().length)],
-                        faker.number().numberBetween(1, 1000)))
+                .mapToObj(i -> {
+                    Aventureiro aventureiro = new Aventureiro(
+                            faker.elderScrolls().firstName() + " " + faker.elderScrolls().lastName(),
+                            Classes.values()[new Random().nextInt(Classes.values().length)],
+                            faker.number().numberBetween(1, 1000)
+                    );
+                    aventureiro.setId(i);
+                    return aventureiro;
+                })
                 .toList();
     }
 

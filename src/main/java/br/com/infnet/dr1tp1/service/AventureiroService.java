@@ -8,7 +8,6 @@ import br.com.infnet.dr1tp1.domain.Aventureiro;
 import br.com.infnet.dr1tp1.enums.Classes;
 import br.com.infnet.dr1tp1.enums.Especies;
 import br.com.infnet.dr1tp1.exceptions.EntityNotFoundException;
-import br.com.infnet.dr1tp1.mapper.AventureiroMapper;
 import br.com.infnet.dr1tp1.repository.AventureiroRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class AventureiroService {
     private final AventureiroRepository aventureiroRepository;
     private final AtomicLong idGenerator = new AtomicLong(101);
-    private final AventureiroMapper aventureiroMapper = new AventureiroMapper();
 
     public AventureiroService(AventureiroRepository aventureiroRepository) {
         this.aventureiroRepository = aventureiroRepository;
