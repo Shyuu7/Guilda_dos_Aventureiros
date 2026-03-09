@@ -1,3 +1,16 @@
 spring:
   application:
-    name: Larissa_Conti_DR1_TP1
+    name: guilda_dos_aventireiros_api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/guilda_db
+    driver-class-name: org.postgresql.Driver
+    username: appuser
+    password: apppass
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
