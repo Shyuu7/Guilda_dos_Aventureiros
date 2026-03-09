@@ -20,20 +20,17 @@ public class User {
     @JoinColumn(name="organization_id")
     private Organization organization;
 
-    @Column(name="nome", nullable = false)
-    @Max(120)
+    @Column(name="nome", nullable = false, length = 120)
     private String name;
 
-    @Max(180)
-    @Column(name="email", nullable = false, unique = true)
+    @Column(name="email", nullable = false, unique = true, length = 180)
     private String email;
 
-    @Max(255)
     @Column(name="senha_hash", nullable = false)
     private String hashPassword;
 
     @Max(30)
-    @Column(name="status")
+    @Column(name="status", length = 30)
     private String status;
 
     @Column(name="ultimo_login_em")
