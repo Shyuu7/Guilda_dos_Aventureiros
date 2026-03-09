@@ -1,4 +1,4 @@
-package br.com.infnet.dr1tp1.domain;
+package br.com.infnet.dr1tp1.entity;
 
 import br.com.infnet.dr1tp1.enums.Classes;
 import jakarta.validation.Valid;
