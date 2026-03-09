@@ -2,11 +2,15 @@ package br.com.infnet.dr1tp1.entity.audit;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "usuarios", schema = "audit")
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,16 +20,16 @@ public class User {
     @JoinColumn(name="organization_id")
     private Organization organization;
 
-    @Column(name="nome")
+    @Column(name="nome", nullable = false)
     @Max(120)
     private String name;
 
     @Max(180)
-    @Column(name="email")
+    @Column(name="email", nullable = false, unique = true)
     private String email;
 
     @Max(255)
-    @Column(name="senha_hash")
+    @Column(name="senha_hash", nullable = false)
     private String hashPassword;
 
     @Max(30)
