@@ -13,11 +13,12 @@ import java.time.LocalDateTime;
 @Setter
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuarios_id")
+    @SequenceGenerator(schema = "audit", name = "usuarios_id", sequenceName = "usuarios_id_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="organization_id")
+    @JoinColumn(name="organizacoes_id")
     private Organization organization;
 
     @Column(name="nome", nullable = false, length = 120)
