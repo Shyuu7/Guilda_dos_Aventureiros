@@ -1,6 +1,6 @@
 package br.com.infnet.dr1tp1.repository;
 
-import br.com.infnet.dr1tp1.domain.Aventureiro;
+import br.com.infnet.dr1tp1.entity.Aventureiro;
 import br.com.infnet.dr1tp1.enums.Classes;
 import br.com.infnet.dr1tp1.exceptions.EntityNotFoundException;
 import com.github.javafaker.Faker;

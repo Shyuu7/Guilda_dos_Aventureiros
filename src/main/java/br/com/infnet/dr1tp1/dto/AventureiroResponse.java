@@ -1,7 +1,7 @@
 package br.com.infnet.dr1tp1.dto;
 
 import br.com.infnet.dr1tp1.enums.Classes;
-import br.com.infnet.dr1tp1.domain.Companheiro;
+import br.com.infnet.dr1tp1.entity.Companheiro;
 
 import java.util.Optional;
 

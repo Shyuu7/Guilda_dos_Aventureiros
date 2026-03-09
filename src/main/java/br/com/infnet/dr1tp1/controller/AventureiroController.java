@@ -1,6 +1,6 @@
 package br.com.infnet.dr1tp1.controller;
 
-import br.com.infnet.dr1tp1.domain.Aventureiro;
+import br.com.infnet.dr1tp1.entity.Aventureiro;
 import br.com.infnet.dr1tp1.dto.*;
 import br.com.infnet.dr1tp1.mapper.AventureiroMapper;
 import br.com.infnet.dr1tp1.service.AventureiroService;

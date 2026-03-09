@@ -1,10 +1,10 @@
 package br.com.infnet.dr1tp1.service;
 
-import br.com.infnet.dr1tp1.domain.Companheiro;
+import br.com.infnet.dr1tp1.entity.Companheiro;
 import br.com.infnet.dr1tp1.dto.AventureiroAtualizacaoRequest;
 import br.com.infnet.dr1tp1.dto.AventureiroResponse;
 import br.com.infnet.dr1tp1.dto.AventureiroResumoResponse;
-import br.com.infnet.dr1tp1.domain.Aventureiro;
+import br.com.infnet.dr1tp1.entity.Aventureiro;
 import br.com.infnet.dr1tp1.enums.Classes;
 import br.com.infnet.dr1tp1.enums.Especies;
 import br.com.infnet.dr1tp1.exceptions.EntityNotFoundException;

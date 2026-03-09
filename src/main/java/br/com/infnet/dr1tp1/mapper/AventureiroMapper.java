@@ -1,7 +1,6 @@
 package br.com.infnet.dr1tp1.mapper;
 
-import br.com.infnet.dr1tp1.domain.Aventureiro;
-import br.com.infnet.dr1tp1.dto.AventureiroAtualizacaoRequest;
+import br.com.infnet.dr1tp1.entity.Aventureiro;
 import br.com.infnet.dr1tp1.dto.AventureiroCriacaoRequest;
 import br.com.infnet.dr1tp1.dto.AventureiroResponse;
 import org.springframework.stereotype.Component;
