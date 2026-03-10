@@ -1,10 +1,10 @@
-package br.com.infnet.dr1tp1.controller;
+package br.com.infnet.guilda_dos_aventureiros.controllers;
 
-import br.com.infnet.dr1tp1.entity.Aventureiro;
-import br.com.infnet.dr1tp1.dto.*;
-import br.com.infnet.dr1tp1.mapper.AventureiroMapper;
-import br.com.infnet.dr1tp1.service.AventureiroService;
-import br.com.infnet.dr1tp1.enums.Classes;
+import br.com.infnet.guilda_dos_aventureiros.entities.Aventureiro;
+import br.com.infnet.guilda_dos_aventureiros.dto.*;
+import br.com.infnet.guilda_dos_aventureiros.mapper.AventureiroMapper;
+import br.com.infnet.guilda_dos_aventureiros.service.AventureiroService;
+import br.com.infnet.guilda_dos_aventureiros.enums.Classes;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.http.HttpStatus;
@@ -32,6 +32,12 @@ public class AventureiroController {
     }
 
     @GetMapping
+    public ResponseEntity<List<AventureiroResponse>> listarAventureiros() {
+        List<AventureiroResponse> aventureiros = aventureiroService.listarAventureiros();
+        return ResponseEntity.ok(aventureiros);
+    }
+
+    @GetMapping("/listarpaginado")
     public ResponseEntity<List<AventureiroResumoResponse>> listarAventureirosComFiltro(
             @RequestParam(required = false) Classes classe,
             @RequestParam(required = false) Boolean ativo,

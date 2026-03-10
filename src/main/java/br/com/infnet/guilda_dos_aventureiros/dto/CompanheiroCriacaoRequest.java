@@ -1,6 +1,6 @@
-package br.com.infnet.dr1tp1.dto;
+package br.com.infnet.guilda_dos_aventureiros.dto;
 
-import br.com.infnet.dr1tp1.enums.Especies;
+import br.com.infnet.guilda_dos_aventureiros.enums.Especies;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

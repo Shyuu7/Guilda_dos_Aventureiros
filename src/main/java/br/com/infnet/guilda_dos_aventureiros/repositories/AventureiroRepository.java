@@ -1,8 +1,8 @@
-package br.com.infnet.dr1tp1.repository;
+package br.com.infnet.guilda_dos_aventureiros.repositories;
 
-import br.com.infnet.dr1tp1.entity.Aventureiro;
-import br.com.infnet.dr1tp1.enums.Classes;
-import br.com.infnet.dr1tp1.exceptions.EntityNotFoundException;
+import br.com.infnet.guilda_dos_aventureiros.entities.Aventureiro;
+import br.com.infnet.guilda_dos_aventureiros.enums.Classes;
+import br.com.infnet.guilda_dos_aventureiros.exceptions.EntityNotFoundException;
 import com.github.javafaker.Faker;
 import org.springframework.stereotype.Repository;
 

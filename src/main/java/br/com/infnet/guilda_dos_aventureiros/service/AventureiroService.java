@@ -1,14 +1,14 @@
-package br.com.infnet.dr1tp1.service;
+package br.com.infnet.guilda_dos_aventureiros.service;
 
-import br.com.infnet.dr1tp1.entity.Companheiro;
-import br.com.infnet.dr1tp1.dto.AventureiroAtualizacaoRequest;
-import br.com.infnet.dr1tp1.dto.AventureiroResponse;
-import br.com.infnet.dr1tp1.dto.AventureiroResumoResponse;
-import br.com.infnet.dr1tp1.entity.Aventureiro;
-import br.com.infnet.dr1tp1.enums.Classes;
-import br.com.infnet.dr1tp1.enums.Especies;
-import br.com.infnet.dr1tp1.exceptions.EntityNotFoundException;
-import br.com.infnet.dr1tp1.repository.AventureiroRepository;
+import br.com.infnet.guilda_dos_aventureiros.entities.Companheiro;
+import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroAtualizacaoRequest;
+import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroResponse;
+import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroResumoResponse;
+import br.com.infnet.guilda_dos_aventureiros.entities.Aventureiro;
+import br.com.infnet.guilda_dos_aventureiros.enums.Classes;
+import br.com.infnet.guilda_dos_aventureiros.enums.Especies;
+import br.com.infnet.guilda_dos_aventureiros.exceptions.EntityNotFoundException;
+import br.com.infnet.guilda_dos_aventureiros.repositories.AventureiroRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +33,20 @@ public class AventureiroService {
         aventureiro.setId(idGenerator.getAndIncrement());
         aventureiroRepository.salvarAventureiro(aventureiro);
         return aventureiro;
+    }
+
+    public List<AventureiroResponse> listarAventureiros() {
+        List<Aventureiro> aventureiros = aventureiroRepository.findAll();
+        return aventureiros.stream()
+                .map(a -> new AventureiroResponse(
+                        a.getId(),
+                        a.getNome(),
+                        a.getClasse(),
+                        a.getNivel(),
+                        a.isAtivo(),
+                        a.getCompanheiro()
+                ))
+                .toList();
     }
 
    public List<AventureiroResumoResponse> listarComFiltros (Classes classe, Boolean ativo, Integer nivelMinimo, int page, int size) {

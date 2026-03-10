@@ -2,7 +2,7 @@ spring:
   application:
     name: guilda_dos_aventireiros_api
   datasource:
-    url: jdbc:postgresql://localhost:5432/guilda_db
+    url: jdbc:postgresql://localhost:5432/postgres
     driver-class-name: org.postgresql.Driver
     username: appuser
     password: apppass

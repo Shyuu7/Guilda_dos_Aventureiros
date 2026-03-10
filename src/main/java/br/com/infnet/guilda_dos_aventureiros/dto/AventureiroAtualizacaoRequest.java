@@ -1,6 +1,6 @@
-package br.com.infnet.dr1tp1.dto;
+package br.com.infnet.guilda_dos_aventureiros.dto;
 
-import br.com.infnet.dr1tp1.enums.Classes;
+import br.com.infnet.guilda_dos_aventureiros.enums.Classes;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;

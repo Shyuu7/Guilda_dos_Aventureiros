@@ -1,8 +1,8 @@
-package br.com.infnet.dr1tp1.mapper;
+package br.com.infnet.guilda_dos_aventureiros.mapper;
 
-import br.com.infnet.dr1tp1.entity.Aventureiro;
-import br.com.infnet.dr1tp1.dto.AventureiroCriacaoRequest;
-import br.com.infnet.dr1tp1.dto.AventureiroResponse;
+import br.com.infnet.guilda_dos_aventureiros.entities.Aventureiro;
+import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroCriacaoRequest;
+import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroResponse;
 import org.springframework.stereotype.Component;
 
 

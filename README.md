@@ -237,7 +237,7 @@ mvn spring-boot:run
 3. **Alternativa - Compilar e executar**:
 ```bash
 mvn clean compile
-mvn exec:java -Dexec.mainClass="br.com.infnet.dr1tp1.MainApplication"
+mvn exec:java -Dexec.mainClass="br.com.infnet.guilda_dos_aventureiros.MainApplication"
 ```
 
 ### Acesso à API

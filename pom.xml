@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.infnet</groupId>
-	<artifactId>Larissa_Conti_DR1_TP1</artifactId>
+	<artifactId>Guilda_Dos_Aventureiros</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Larissa_Conti_DR1_TP1</name>
+	<name>GuildaDosAventureiros</name>
 	<description>Guilda de Aventureiros</description>
 	<url/>
 	<licenses>

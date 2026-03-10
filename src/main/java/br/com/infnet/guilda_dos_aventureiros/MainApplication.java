@@ -1,4 +1,4 @@
-package br.com.infnet.dr1tp1;
+package br.com.infnet.guilda_dos_aventureiros;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

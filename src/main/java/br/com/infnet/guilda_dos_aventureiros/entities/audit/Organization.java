@@ -1,8 +1,9 @@
-package br.com.infnet.dr1tp1.entity.audit;
+package br.com.infnet.guilda_dos_aventureiros.entities.audit;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +13,8 @@ import java.time.LocalDateTime;
 @Setter
 public class Organization {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "organizacao_id")
+    @SequenceGenerator(schema = "audit", name = "organizacao_id", sequenceName = "organizacoes_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name="nome", nullable = false, length = 120)
@@ -22,5 +24,6 @@ public class Organization {
     private Boolean isActive;
 
     @Column(name="created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

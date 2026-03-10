@@ -1,4 +1,4 @@
-package br.com.infnet.dr1tp1.entity.audit;
+package br.com.infnet.guilda_dos_aventureiros.entities.audit;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;

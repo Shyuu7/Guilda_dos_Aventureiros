@@ -1,6 +1,6 @@
-package br.com.infnet.dr1tp1.entity;
+package br.com.infnet.guilda_dos_aventureiros.entities;
 
-import br.com.infnet.dr1tp1.enums.Especies;
+import br.com.infnet.guilda_dos_aventureiros.enums.Especies;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,4 +1,4 @@
-package br.com.infnet.dr1tp1.enums;
+package br.com.infnet.guilda_dos_aventureiros.enums;
 
 public enum Classes {
     GUERREIRO,
