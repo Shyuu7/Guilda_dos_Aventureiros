@@ -4,11 +4,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "usuarios", schema = "audit")
+@Table(name = "usuarios", schema = "audit", indexes = {
+        @Index(name = "idx_usuarios_email", columnList = "email"),
+        @Index(name = "idx_usuarios_org", columnList = "organizacao_id")
+        },
+        uniqueConstraints = {
+        @UniqueConstraint(name = "uq_usuarios_email_por_org", columnNames = {"email", "organizacao_id"})
+        })
 @Getter
 @Setter
 public class User {
@@ -18,7 +26,7 @@ public class User {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="organizacoes_id")
+    @JoinColumn(name="organizacao_id", foreignKey = @ForeignKey (name = "fk_usuarios_org"), nullable = false)
     private Organization organization;
 
     @Column(name="nome", nullable = false, length = 120)
@@ -38,8 +46,13 @@ public class User {
     private LocalDateTime lastLoginAt;
 
     @Column (name="created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @Column(name="updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserRole> user;
 }

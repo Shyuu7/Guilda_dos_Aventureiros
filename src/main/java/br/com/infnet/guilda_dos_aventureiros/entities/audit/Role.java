@@ -3,14 +3,16 @@ package br.com.infnet.guilda_dos_aventureiros.entities.audit;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "roles", schema = "audit")
+@Table(name = "roles", schema = "audit",
+        uniqueConstraints = @UniqueConstraint(name="uq_roles_nome_por_org", columnNames = {"organizacao_id", "nome"}))
 @Getter
 @Setter
-public class Roles {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roles_id")
     @SequenceGenerator(schema = "audit", name = "roles_id", sequenceName = "roles_id_seq", allocationSize = 1)
@@ -26,6 +28,7 @@ public class Roles {
     @Column(name="descricao")
     private String description;
 
-    @Column(name="created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name="created_at", nullable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

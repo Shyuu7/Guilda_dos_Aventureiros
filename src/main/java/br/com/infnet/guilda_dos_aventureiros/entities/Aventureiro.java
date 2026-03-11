@@ -1,10 +1,6 @@
 package br.com.infnet.guilda_dos_aventureiros.entities;
 
 import br.com.infnet.guilda_dos_aventureiros.enums.Classes;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,15 +11,9 @@ import java.util.concurrent.atomic.AtomicLong;
 @Setter
 public class Aventureiro {
     private Long id;
-    @NotBlank(message = "O nome do aventureiro é obrigatório")
-    @NotNull(message = "O nome do aventureiro não pode ser nulo")
     private String nome;
-    @NotNull(message = "A classe do aventureiro é obrigatória")
-    @Valid
     private Classes classe;
-    @Min(value = 1, message = "O nível do aventureiro deve ser no mínimo 1")
     private int nivel;
-    @NotNull
     private boolean ativo;
     private Optional<Companheiro> companheiro;
 
