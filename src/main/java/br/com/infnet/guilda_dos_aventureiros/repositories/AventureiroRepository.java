@@ -1,7 +1,7 @@
 package br.com.infnet.guilda_dos_aventureiros.repositories;
 
 import br.com.infnet.guilda_dos_aventureiros.entities.Aventureiro;
-import br.com.infnet.guilda_dos_aventureiros.enums.Classes;
+import br.com.infnet.guilda_dos_aventureiros.enums.AventureiroClasses;
 import br.com.infnet.guilda_dos_aventureiros.exceptions.EntityNotFoundException;
 import com.github.javafaker.Faker;
 import org.springframework.stereotype.Repository;
@@ -25,7 +25,7 @@ public class AventureiroRepository {
                 .mapToObj(i -> {
                     Aventureiro aventureiro = new Aventureiro(
                             faker.elderScrolls().firstName() + " " + faker.elderScrolls().lastName(),
-                            Classes.values()[new Random().nextInt(Classes.values().length)],
+                            AventureiroClasses.values()[new Random().nextInt(AventureiroClasses.values().length)],
                             faker.number().numberBetween(1, 1000)
                     );
                     aventureiro.setId(i);

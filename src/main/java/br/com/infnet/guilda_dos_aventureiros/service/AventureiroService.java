@@ -5,8 +5,8 @@ import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroAtualizacaoRequest;
 import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroResponse;
 import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroResumoResponse;
 import br.com.infnet.guilda_dos_aventureiros.entities.Aventureiro;
-import br.com.infnet.guilda_dos_aventureiros.enums.Classes;
-import br.com.infnet.guilda_dos_aventureiros.enums.Especies;
+import br.com.infnet.guilda_dos_aventureiros.enums.AventureiroClasses;
+import br.com.infnet.guilda_dos_aventureiros.enums.CompanheiroEspecies;
 import br.com.infnet.guilda_dos_aventureiros.exceptions.EntityNotFoundException;
 import br.com.infnet.guilda_dos_aventureiros.repositories.AventureiroRepository;
 import org.springframework.stereotype.Service;
@@ -49,7 +49,7 @@ public class AventureiroService {
                 .toList();
     }
 
-   public List<AventureiroResumoResponse> listarComFiltros (Classes classe, Boolean ativo, Integer nivelMinimo, int page, int size) {
+   public List<AventureiroResumoResponse> listarComFiltros (AventureiroClasses classe, Boolean ativo, Integer nivelMinimo, int page, int size) {
         List <Aventureiro> todos = aventureiroRepository.findAll();
         List <Aventureiro> filtrados = todos.stream()
                 .filter(a -> classe == null || a.getClasse().equals(classe))
@@ -63,7 +63,7 @@ public class AventureiroService {
                 .toList();
    }
 
-   public long contarAventureirosComFiltros(Classes classe, Boolean ativo, Integer nivelMinimo) {
+   public long contarAventureirosComFiltros(AventureiroClasses classe, Boolean ativo, Integer nivelMinimo) {
        List<Aventureiro> todos = aventureiroRepository.findAll();
        return todos.stream()
                .filter(a -> classe == null || a.getClasse().equals(classe))
@@ -100,7 +100,7 @@ public class AventureiroService {
         aventureiroRepository.reativarAventureiro(id);
     }
 
-    public void invocarCompanheiro(Long idAventureiro, String nomeCompanheiro, Especies especie, int lealdade) {
+    public void invocarCompanheiro(Long idAventureiro, String nomeCompanheiro, CompanheiroEspecies especie, int lealdade) {
         Aventureiro aventureiro = aventureiroRepository.buscarPorId(idAventureiro);
         if (!aventureiro.isAtivo() || aventureiro.getId() == null) {
             throw new EntityNotFoundException("O aventureiro não encontrado.");

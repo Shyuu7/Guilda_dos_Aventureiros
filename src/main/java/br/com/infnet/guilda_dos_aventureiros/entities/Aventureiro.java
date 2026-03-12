@@ -1,6 +1,6 @@
 package br.com.infnet.guilda_dos_aventureiros.entities;
 
-import br.com.infnet.guilda_dos_aventureiros.enums.Classes;
+import br.com.infnet.guilda_dos_aventureiros.enums.AventureiroClasses;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,12 +12,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Aventureiro {
     private Long id;
     private String nome;
-    private Classes classe;
+    private AventureiroClasses classe;
     private int nivel;
     private boolean ativo;
     private Optional<Companheiro> companheiro;
 
-    public Aventureiro(String nome, Classes classe, int nivel) {
+    public Aventureiro(String nome, AventureiroClasses classe, int nivel) {
         final AtomicLong idGenerator = new AtomicLong(1);
         this.id = idGenerator.getAndIncrement();
         this.nome = nome;
