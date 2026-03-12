@@ -26,7 +26,7 @@ import java.util.Map;
 @Setter
 public class AuditEntry {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "audit_entries_id")
     @SequenceGenerator(schema = "audit", name = "audit_entries_id", sequenceName = "audit_entries_id_seq", allocationSize = 1)
     private Long id;
 

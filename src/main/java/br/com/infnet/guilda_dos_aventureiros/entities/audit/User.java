@@ -39,17 +39,17 @@ public class User {
     private String hashPassword;
 
     @Max(30)
-    @Column(name="status", length = 30)
+    @Column(name="status", length = 30, nullable = false)
     private String status;
 
     @Column(name="ultimo_login_em")
     private LocalDateTime lastLoginAt;
 
-    @Column (name="created_at")
+    @Column (name="created_at", nullable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name="updated_at")
+    @Column(name="updated_at", nullable = false)
     @CreationTimestamp
     private LocalDateTime updatedAt;
 

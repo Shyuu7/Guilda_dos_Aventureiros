@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 public class ApiKey {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "api_keys_id")
     @SequenceGenerator(schema = "audit", name = "api_keys_id", sequenceName = "api_keys_id_seq", allocationSize = 1)
     private Long id;
 

@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 @Table(name = "permissions", schema = "audit")
 public class Permission {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permissions_id")
     @SequenceGenerator(schema = "audit", name = "permissions_id", sequenceName = "permissions_id_seq", allocationSize = 1)
     private Long id;
 
