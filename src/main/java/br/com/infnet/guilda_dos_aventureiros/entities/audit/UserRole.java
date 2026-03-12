@@ -15,19 +15,20 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UserRole {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //Falta resolver esse problema de id
+    @EmbeddedId
+    private UserRoleId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "fk_ur_user"), nullable = false)
+    @MapsId("usuarioId")
+    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "fk_ur_user"), nullable = false, insertable = false, updatable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "fk_ur_role"), nullable = false)
+    @MapsId("roleId")
+    @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "fk_ur_role"), nullable = false, insertable = false, updatable = false)
     private Role role;
 
-    @JoinColumn(name = "granted_at")
+    @Column(name = "granted_at", nullable = false)
     @CreationTimestamp
     private LocalDateTime grantedAt;
 }
