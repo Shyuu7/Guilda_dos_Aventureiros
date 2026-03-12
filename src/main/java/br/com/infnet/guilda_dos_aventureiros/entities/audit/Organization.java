@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,6 +30,9 @@ public class Organization {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<User> users;
+    @OneToMany(mappedBy = "organizationUser", cascade = CascadeType.ALL)
+    private List<User> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "organizationEntry", cascade = CascadeType.ALL)
+    private List<AuditEntry> auditEntries = new ArrayList<>();
 }

@@ -14,7 +14,6 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class UserRoleId implements Serializable {
     private Long usuarioId;
     private Long roleId;

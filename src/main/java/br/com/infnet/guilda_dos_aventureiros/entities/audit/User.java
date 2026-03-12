@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,7 @@ public class User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="organizacao_id", foreignKey = @ForeignKey (name = "fk_usuarios_org"), nullable = false)
-    private Organization organization;
+    private Organization organizationUser;
 
     @Column(name="nome", nullable = false, length = 120)
     private String name;
@@ -53,6 +54,6 @@ public class User {
     @CreationTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserRole> user;
+    @OneToMany(mappedBy = "actorUser", cascade = CascadeType.ALL)
+    private List<AuditEntry> auditEntries = new ArrayList<>();
 }

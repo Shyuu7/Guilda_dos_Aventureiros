@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.net.InetAddress;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -32,7 +33,7 @@ public class AuditEntry {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="organizacao_id", nullable = false, foreignKey = @ForeignKey(name = "fk_audit_org"))
-    private Organization organization;
+    private Organization organizationEntry;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="actor_user_id", foreignKey = @ForeignKey(name = "fk_audit_actor_user"))
@@ -67,13 +68,12 @@ public class AuditEntry {
 
     @Column(name = "diff", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Object> diff;
+    private Map<String, Object> diff = new HashMap<>();
 
     @Column(name = "metadata", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Object> metadata;
+    private Map<String, Object> metadata = new HashMap<>();
 
     @Column(name="success", nullable = false)
     private Boolean isSuccessful;
-
 }

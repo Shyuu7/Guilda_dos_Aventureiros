@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "api_keys", schema = "audit",
@@ -37,4 +39,7 @@ public class ApiKey {
 
     @Column(name="last_used_at")
     private LocalDateTime lastUsedAt;
+
+    @OneToMany(mappedBy = "actorApiKey", cascade = CascadeType.ALL)
+    private List<AuditEntry> auditEntries = new ArrayList<>();
 }
