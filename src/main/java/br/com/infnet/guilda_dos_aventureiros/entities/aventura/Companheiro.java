@@ -1,6 +1,6 @@
-package br.com.infnet.guilda_dos_aventureiros.entities;
+package br.com.infnet.guilda_dos_aventureiros.entities.aventura;
 
-import br.com.infnet.guilda_dos_aventureiros.enums.CompanheiroEspecies;
+import br.com.infnet.guilda_dos_aventureiros.enums.aventura.CompanheiroEspecies;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,12 @@ public class Companheiro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nome", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @PrimaryKeyJoinColumn(name = "aventureiro_id", foreignKey = @ForeignKey(name = "fk_companheiro_aventureiro"))
+    private Aventureiro aventureiro;
+
+    @Column(name = "nome", nullable = false, length = 120)
     private String nome;
 
     @Enumerated(EnumType.STRING)
@@ -31,11 +36,6 @@ public class Companheiro {
     @Range(min = 0, max = 100, message = "Lealdade deve ser um número inteiro entre 0 e 100")
     @Column(name = "lealdade", nullable = false)
     private int lealdade;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @PrimaryKeyJoinColumn(name = "aventureiro_id", foreignKey = @ForeignKey(name = "fk_companheiro_aventureiro"))
-    private Aventureiro aventureiro;
 
     public Companheiro(String nome, CompanheiroEspecies especie, int lealdade) {
         this.nome = nome;

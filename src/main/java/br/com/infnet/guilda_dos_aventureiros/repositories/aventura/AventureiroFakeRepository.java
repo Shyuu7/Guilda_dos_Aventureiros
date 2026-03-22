@@ -1,7 +1,7 @@
-package br.com.infnet.guilda_dos_aventureiros.repositories;
+package br.com.infnet.guilda_dos_aventureiros.repositories.aventura;
 
-import br.com.infnet.guilda_dos_aventureiros.entities.Aventureiro;
-import br.com.infnet.guilda_dos_aventureiros.enums.AventureiroClasses;
+import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
+import br.com.infnet.guilda_dos_aventureiros.enums.aventura.AventureiroClasses;
 import br.com.infnet.guilda_dos_aventureiros.exceptions.EntityNotFoundException;
 import com.github.javafaker.Faker;
 import org.springframework.stereotype.Repository;
@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.stream.LongStream;
 
 @Repository
-public class AventureiroRepository {
+public class AventureiroFakeRepository {
     private final List<Aventureiro> aventureiros = new ArrayList<>();
 
     public void carregarAventureiros(){
