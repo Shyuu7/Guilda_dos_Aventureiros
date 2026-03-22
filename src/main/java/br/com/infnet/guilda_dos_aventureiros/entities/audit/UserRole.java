@@ -20,12 +20,12 @@ public class UserRole {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("usuarioId")
-    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "fk_ur_user"), nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "fk_ur_user"), nullable = false)
     private User userRoles;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("roleId")
-    @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "fk_ur_role"), nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "fk_ur_role"), nullable = false)
     private Role roles;
 
     @Column(name = "granted_at", nullable = false)
