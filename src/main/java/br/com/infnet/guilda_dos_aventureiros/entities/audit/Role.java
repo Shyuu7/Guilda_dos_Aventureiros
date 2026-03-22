@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "roles", schema = "audit",
@@ -21,6 +23,20 @@ public class Role {
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name="organizacao_id", nullable = false, foreignKey = @ForeignKey(name = "fk_roles_org"))
     private Organization organization;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "role_permissions",
+            schema = "audit",
+            joinColumns = @JoinColumn(name = "role_id"),
+            foreignKey = @ForeignKey(name = "fk_rp_role"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"),
+            inverseForeignKey = @ForeignKey(name = "fk_rp_perm")
+    )
+    private List<Permission> permissions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "roles")
+    private List<UserRole> userRoles = new ArrayList<>();
 
     @Column(name="nome", nullable = false, length = 60)
     private String name;

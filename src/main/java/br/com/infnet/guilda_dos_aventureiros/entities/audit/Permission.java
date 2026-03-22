@@ -3,6 +3,9 @@ package br.com.infnet.guilda_dos_aventureiros.entities.audit;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "permissions", schema = "audit")
 public class Permission {
@@ -17,4 +20,7 @@ public class Permission {
 
     @Column(name = "descricao", nullable = false)
     private String descricao;
+
+    @ManyToMany(mappedBy = "permissions")
+    private List<Role> roles = new ArrayList<>();
 }
