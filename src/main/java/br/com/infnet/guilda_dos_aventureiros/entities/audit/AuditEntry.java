@@ -1,6 +1,6 @@
 package br.com.infnet.guilda_dos_aventureiros.entities.audit;
 
-import br.com.infnet.guilda_dos_aventureiros.enums.AuditEntryAction;
+import br.com.infnet.guilda_dos_aventureiros.enums.audit.AuditEntryAction;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

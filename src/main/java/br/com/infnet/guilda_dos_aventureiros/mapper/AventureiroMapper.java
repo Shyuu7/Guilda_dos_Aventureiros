@@ -1,9 +1,11 @@
 package br.com.infnet.guilda_dos_aventureiros.mapper;
 
-import br.com.infnet.guilda_dos_aventureiros.entities.Aventureiro;
+import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
 import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroCriacaoRequest;
 import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroResponse;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 
 @Component
@@ -23,7 +25,7 @@ public class AventureiroMapper {
                 aventureiro.getClasse(),
                 aventureiro.getNivel(),
                 aventureiro.isAtivo(),
-                aventureiro.getCompanheiro()
+                Optional.ofNullable(aventureiro.getCompanheiro())
         );
     }
 }

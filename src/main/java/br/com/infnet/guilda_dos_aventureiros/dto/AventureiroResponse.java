@@ -1,7 +1,7 @@
 package br.com.infnet.guilda_dos_aventureiros.dto;
 
-import br.com.infnet.guilda_dos_aventureiros.enums.AventureiroClasses;
-import br.com.infnet.guilda_dos_aventureiros.entities.Companheiro;
+import br.com.infnet.guilda_dos_aventureiros.enums.aventura.AventureiroClasses;
+import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Companheiro;
 
 import java.util.Optional;
 

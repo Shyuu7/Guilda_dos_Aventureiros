@@ -1,6 +1,6 @@
 package br.com.infnet.guilda_dos_aventureiros.dto;
 
-import br.com.infnet.guilda_dos_aventureiros.enums.AventureiroClasses;
+import br.com.infnet.guilda_dos_aventureiros.enums.aventura.AventureiroClasses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

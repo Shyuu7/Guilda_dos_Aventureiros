@@ -1,10 +1,10 @@
 package br.com.infnet.guilda_dos_aventureiros.controllers;
 
-import br.com.infnet.guilda_dos_aventureiros.entities.Aventureiro;
+import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
 import br.com.infnet.guilda_dos_aventureiros.dto.*;
 import br.com.infnet.guilda_dos_aventureiros.mapper.AventureiroMapper;
 import br.com.infnet.guilda_dos_aventureiros.service.AventureiroService;
-import br.com.infnet.guilda_dos_aventureiros.enums.AventureiroClasses;
+import br.com.infnet.guilda_dos_aventureiros.enums.aventura.AventureiroClasses;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.http.HttpStatus;

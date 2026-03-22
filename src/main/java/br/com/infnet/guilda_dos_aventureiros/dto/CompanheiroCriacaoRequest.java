@@ -1,6 +1,6 @@
 package br.com.infnet.guilda_dos_aventureiros.dto;
 
-import br.com.infnet.guilda_dos_aventureiros.enums.CompanheiroEspecies;
+import br.com.infnet.guilda_dos_aventureiros.enums.aventura.CompanheiroEspecies;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
