@@ -1,7 +1,7 @@
-package br.com.infnet.guilda_dos_aventureiros.entities;
+package br.com.infnet.guilda_dos_aventureiros.entities.aventura;
 
 import br.com.infnet.guilda_dos_aventureiros.entities.audit.User;
-import br.com.infnet.guilda_dos_aventureiros.enums.AventureiroClasses;
+import br.com.infnet.guilda_dos_aventureiros.enums.aventura.AventureiroClasses;
 import br.com.infnet.guilda_dos_aventureiros.entities.audit.Organization;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -33,7 +33,7 @@ public class Aventureiro {
 
     @NotNull
     @NotBlank
-    @Column(name = "nome", nullable = false)
+    @Column(name = "nome", nullable = false, length = 120)
     private String nome;
 
     @Enumerated(EnumType.STRING)
