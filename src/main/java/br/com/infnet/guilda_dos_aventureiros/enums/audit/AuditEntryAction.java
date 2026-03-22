@@ -1,4 +1,4 @@
-package br.com.infnet.guilda_dos_aventureiros.enums;
+package br.com.infnet.guilda_dos_aventureiros.enums.audit;
 
 public enum AuditEntryAction {
     CREATE,
