@@ -2,12 +2,16 @@ package br.com.infnet.guilda_dos_aventureiros.entities.audit;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "permissions", schema = "audit")
+@Getter
+@Setter
 public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "permissions_id")
