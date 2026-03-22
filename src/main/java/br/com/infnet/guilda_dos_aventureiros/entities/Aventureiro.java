@@ -47,8 +47,7 @@ public class Aventureiro {
     @Column(name = "ativo", nullable = false)
     private boolean ativo = true;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) //Não existe companheiro sem aventureiro
-    @JoinColumn(name = "companheiro_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_aventureiro_companheiro"))
+    @OneToOne(mappedBy = "aventureiro", cascade = CascadeType.ALL, orphanRemoval = true) //Não existe companheiro sem aventureiro
     private Companheiro companheiro;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -81,4 +80,16 @@ public class Aventureiro {
     public void encerrarVinculo() {
         this.ativo = false;
     }
+
+    public void invocarCompanheiro(Companheiro companheiro) {
+            this.companheiro = companheiro;
+            companheiro.associarAventureiro(this);
+    }
+
+    public void liberarCompanheiro() {
+        this.companheiro.removerAventureiro();
+        this.companheiro = null;
+    }
+
 }
+
