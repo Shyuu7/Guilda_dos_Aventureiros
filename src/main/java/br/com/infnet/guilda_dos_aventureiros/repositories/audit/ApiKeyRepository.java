@@ -1,0 +1,9 @@
+package br.com.infnet.guilda_dos_aventureiros.repositories.audit;
+
+import br.com.infnet.guilda_dos_aventureiros.entities.audit.ApiKey;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ApiKeyRepository extends JpaRepository<ApiKey, Long> {
+}
