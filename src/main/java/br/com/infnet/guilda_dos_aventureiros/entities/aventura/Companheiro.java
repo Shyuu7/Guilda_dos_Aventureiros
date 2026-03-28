@@ -44,13 +44,4 @@ public class Companheiro {
         this.especie = especie;
         this.lealdade = lealdade;
     }
-
-    void associarAventureiro(Aventureiro aventureiro) {
-        this.aventureiro = aventureiro;
-        aventureiro.setCompanheiro(this);
-    }
-
-    void removerAventureiro() {
-        this.aventureiro = null;
-    }
 }
