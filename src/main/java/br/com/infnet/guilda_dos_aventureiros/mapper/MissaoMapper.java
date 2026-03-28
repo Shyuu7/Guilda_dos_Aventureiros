@@ -34,51 +34,50 @@ public class MissaoMapper {
         return missao;
     }
 
-    public static MissaoResponse toResponse(Missao entity) {
-        if (entity == null) {
+    public static MissaoResponse toResponse(Missao missao) {
+        if (missao == null) {
             return null;
         }
 
         MissaoResponse dto = new MissaoResponse();
-        dto.setId(entity.getId());
-        dto.setTitulo(entity.getTitulo());
-        dto.setNivelPerigo(entity.getNivelPerigo());
-        dto.setStatus(entity.getStatus());
-        dto.setDataInicio(entity.getDataInicio());
-        dto.setDataTermino(entity.getDataTermino());
+        dto.setId(missao.getId());
+        dto.setTitulo(missao.getTitulo());
+        dto.setNivelPerigo(missao.getNivelPerigo());
+        dto.setStatus(missao.getStatus());
+        dto.setDataInicio(missao.getDataInicio());
+        dto.setDataTermino(missao.getDataTermino());
 
-        if (entity.getOrganizacao() != null) {
-            dto.setOrganizacaoId(entity.getOrganizacao().getId());
+        if (missao.getOrganizacao() != null) {
+            dto.setOrganizacaoId(missao.getOrganizacao().getId());
         }
 
-        if (entity.getParticipacoes() != null && !entity.getParticipacoes().isEmpty()) {
+        if (missao.getParticipacoes() != null && !missao.getParticipacoes().isEmpty()) {
             dto.setParticipacoes(
-                    entity.getParticipacoes().stream()
+                    missao.getParticipacoes().stream()
                             .map(MissaoMapper::toResponse)
                             .collect(Collectors.toList())
             );
         } else {
             dto.setParticipacoes(Collections.emptyList());
         }
-
         return dto;
     }
 
-    public static ParticipacaoResponse toResponse(ParticipacaoMissao entity) {
-        if (entity == null) {
+    public static ParticipacaoResponse toResponse(ParticipacaoMissao participacaoMissao) {
+        if (participacaoMissao == null) {
             return null;
         }
 
         ParticipacaoResponse dto = new ParticipacaoResponse();
-        if (entity.getAventureiro() != null) {
-            dto.setAventureiroId(entity.getAventureiro().getId());
-            dto.setNomeAventureiro(entity.getAventureiro().getNome());
+        if (participacaoMissao.getAventureiro() != null) {
+            dto.setAventureiroId(participacaoMissao.getAventureiro().getId());
+            dto.setNomeAventureiro(participacaoMissao.getAventureiro().getNome());
         }
-        dto.setPapelMissao(entity.getPapelMissao());
-        dto.setRecompensaEmOuro(entity.getRecompensaEmOuro());
-        dto.setDestaque(entity.isDestaque());
-        dto.setDataDeRegistro(entity.getDataDeRegistro());
 
+        dto.setPapelMissao(participacaoMissao.getPapelMissao());
+        dto.setRecompensaEmOuro(participacaoMissao.getRecompensaEmOuro());
+        dto.setDestaque(participacaoMissao.isDestaque());
+        dto.setDataDeRegistro(participacaoMissao.getDataDeRegistro());
         return dto;
     }
 
@@ -91,7 +90,6 @@ public class MissaoMapper {
         entity.setPapelMissao(dto.getPapelMissao());
         entity.setRecompensaEmOuro(dto.getRecompensaEmOuro());
         entity.setDestaque(dto.isDestaque());
-
         return entity;
     }
 }
