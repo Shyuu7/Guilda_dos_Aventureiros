@@ -1,0 +1,94 @@
+package br.com.infnet.guilda_dos_aventureiros.service;
+
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.MissaoCriacaoRequest;
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.MissaoResponse;
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.ParticipacaoRequest;
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.ParticipacaoResponse;
+import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
+import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Missao;
+import br.com.infnet.guilda_dos_aventureiros.entities.aventura.ParticipacaoMissao;
+import br.com.infnet.guilda_dos_aventureiros.entities.aventura.ParticipacaoMissaoId;
+import br.com.infnet.guilda_dos_aventureiros.enums.aventura.StatusMissao;
+import br.com.infnet.guilda_dos_aventureiros.exceptions.BusinessRuleException;
+import br.com.infnet.guilda_dos_aventureiros.mapper.MissaoMapper;
+import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.AventureiroRepository;
+import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.MissaoRepository;
+import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.ParticipacaoMissaoRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class MissaoService {
+
+    private final MissaoRepository missaoRepository;
+    private final AventureiroRepository aventureiroRepository;
+    private final ParticipacaoMissaoRepository participacaoMissaoRepository;
+
+    public MissaoResponse criarMissao(MissaoCriacaoRequest request) {
+        Missao missao = MissaoMapper.toEntity(request);
+        Missao novaMissao = missaoRepository.save(missao);
+        return MissaoMapper.toResponse(novaMissao);
+    }
+
+    public Page<MissaoResponse> listarMissoes(Pageable pageable) {
+        return missaoRepository.findAll(pageable).map(MissaoMapper::toResponse);
+    }
+
+    public ParticipacaoResponse adicionarAventureiro(Long idMissao, Long idAventureiro, ParticipacaoRequest request) {
+        Missao missao = missaoRepository.findById(idMissao)
+                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada com o ID: " + idMissao));
+
+        Aventureiro aventureiro = aventureiroRepository.findById(idAventureiro)
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado com o ID: " + idAventureiro));
+
+        if (!aventureiro.isAtivo()) {
+            throw new BusinessRuleException("Aventureiros inativos não podem participar de missões.");
+        }
+
+        if (!missao.getOrganizacao().getId().equals(aventureiro.getOrganizacao().getId())) {
+            throw new BusinessRuleException("O aventureiro não pertence à organização desta missão.");
+        }
+
+        if (missao.getStatus() != StatusMissao.PLANEJADA && missao.getStatus() != StatusMissao.EM_ANDAMENTO) {
+            throw new BusinessRuleException("Esta missão não está aceitando novos participantes no momento.");
+        }
+
+        if (participacaoMissaoRepository.existsById(new ParticipacaoMissaoId(idMissao, idAventureiro))) {
+            throw new BusinessRuleException("Este aventureiro já participou desta missão.");
+        }
+
+        ParticipacaoMissao participacao = MissaoMapper.toEntity(request);
+        participacao.setMissao(missao);
+        participacao.setAventureiro(aventureiro);
+
+        ParticipacaoMissao novaParticipacao = participacaoMissaoRepository.save(participacao);
+        return MissaoMapper.toResponse(novaParticipacao);
+    }
+
+    public MissaoResponse atualizarMissao(Long id, MissaoCriacaoRequest request) {
+        Missao missaoExistente = missaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada com o ID: " + id));
+
+        missaoExistente.setTitulo(request.getTitulo());
+        missaoExistente.setNivelPerigo(request.getNivelPerigo());
+        missaoExistente.setStatus(request.getStatus());
+        missaoExistente.setDataInicio(request.getDataInicio());
+        missaoExistente.setDataTermino(request.getDataTermino());
+
+        Missao missaoAtualizada = missaoRepository.save(missaoExistente);
+        return MissaoMapper.toResponse(missaoAtualizada);
+    }
+
+    public void removerMissao(Long id) {
+        if (!missaoRepository.existsById(id)) {
+            throw new EntityNotFoundException("Missão não encontrada com o ID: " + id);
+        }
+        missaoRepository.deleteById(id);
+    }
+}
