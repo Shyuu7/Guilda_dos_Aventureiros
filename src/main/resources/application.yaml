@@ -14,3 +14,7 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false
+  flyway:
+    enabled: true
+    schemas: aventura
+    locations: classpath:db/migration
