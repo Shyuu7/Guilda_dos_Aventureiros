@@ -29,10 +29,9 @@ public class AventureiroController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AventureiroResponse>> listarTodosAventureiros
-            (@PageableDefault (sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
+    public ResponseEntity<List<AventureiroResponse>> listarTodosAventureiros()
     {
-        List<AventureiroResponse> aventureiros = aventureiroService.findAll(pageable);
+        List<AventureiroResponse> aventureiros = aventureiroService.findAllSortedById();
         return ResponseEntity.ok(aventureiros);
     }
 

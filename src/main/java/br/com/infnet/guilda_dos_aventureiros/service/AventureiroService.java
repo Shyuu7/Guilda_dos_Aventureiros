@@ -6,6 +6,7 @@ import br.com.infnet.guilda_dos_aventureiros.entities.audit.Organization;
 import br.com.infnet.guilda_dos_aventureiros.entities.audit.User;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Companheiro;
+import br.com.infnet.guilda_dos_aventureiros.exceptions.BusinessRuleException;
 import br.com.infnet.guilda_dos_aventureiros.exceptions.EntityNotFoundException;
 import br.com.infnet.guilda_dos_aventureiros.mapper.AventureiroMapper;
 import br.com.infnet.guilda_dos_aventureiros.repositories.audit.OrganizationRepository;
@@ -14,6 +15,7 @@ import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.AventureiroRe
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +44,9 @@ public class AventureiroService {
     }
 
     @Transactional(readOnly = true)
-    public List<AventureiroResponse> findAll(Pageable pageable) {
-        return aventureiroRepository.findAll(pageable).stream()
+    public List<AventureiroResponse> findAllSortedById() {
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        return aventureiroRepository.findAll(sort).stream()
                 .map(aventureiroMapper::toResponse)
                 .toList();
     }
@@ -101,10 +104,10 @@ public class AventureiroService {
     public AventureiroResponse invocarCompanheiro(Long idAventureiro, CompanheiroCriacaoRequest request) {
         Aventureiro aventureiro = findAventureiroById(idAventureiro);
         if (!aventureiro.isAtivo()) {
-            throw new IllegalStateException("Não é possível invocar um companheiro para um aventureiro inativo.");
+            throw new BusinessRuleException("Não é possível invocar um companheiro para um aventureiro inativo.");
         }
         if (aventureiro.getCompanheiro() != null) {
-            throw new IllegalStateException("Aventureiro já possui um companheiro.");
+            throw new BusinessRuleException("Aventureiro já possui um companheiro.");
         }
 
         Companheiro novoCompanheiro = new Companheiro();
