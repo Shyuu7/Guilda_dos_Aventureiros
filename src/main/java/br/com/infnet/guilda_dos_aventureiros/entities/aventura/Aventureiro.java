@@ -3,6 +3,7 @@ package br.com.infnet.guilda_dos_aventureiros.entities.aventura;
 import br.com.infnet.guilda_dos_aventureiros.entities.audit.User;
 import br.com.infnet.guilda_dos_aventureiros.enums.aventura.AventureiroClasses;
 import br.com.infnet.guilda_dos_aventureiros.entities.audit.Organization;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -41,13 +44,14 @@ public class Aventureiro {
     private AventureiroClasses classe;
 
     @Positive
-    @Column(name = "nivel")
+    @Column(name = "nivel", nullable = false)
     private int nivel;
 
     @Column(name = "ativo", nullable = false)
     private boolean ativo = true;
 
     @OneToOne(mappedBy = "aventureiro", cascade = CascadeType.ALL, orphanRemoval = true) //Não existe companheiro sem aventureiro
+    @JsonManagedReference
     private Companheiro companheiro;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -58,6 +62,9 @@ public class Aventureiro {
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "fk_aventureiros_usuario"))
     @NotNull
     private User usuario;
+
+    @OneToMany(mappedBy = "aventureiro", fetch = FetchType.LAZY)
+    private List<ParticipacaoMissao> participacoes;
 
     @CreationTimestamp
     @Column(name = "data_criacao", nullable = false, updatable = false)
@@ -79,16 +86,6 @@ public class Aventureiro {
 
     public void encerrarVinculo() {
         this.ativo = false;
-    }
-
-    public void invocarCompanheiro(Companheiro companheiro) {
-            this.companheiro = companheiro;
-            companheiro.associarAventureiro(this);
-    }
-
-    public void liberarCompanheiro() {
-        this.companheiro.removerAventureiro();
-        this.companheiro = null;
     }
 
 }
