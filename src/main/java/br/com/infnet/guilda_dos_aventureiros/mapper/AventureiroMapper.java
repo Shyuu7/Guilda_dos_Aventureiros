@@ -1,10 +1,12 @@
 package br.com.infnet.guilda_dos_aventureiros.mapper;
 
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.AventureiroResumoResponse;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
-import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroCriacaoRequest;
-import br.com.infnet.guilda_dos_aventureiros.dto.AventureiroResponse;
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.AventureiroCriacaoRequest;
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.AventureiroResponse;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -26,6 +28,16 @@ public class AventureiroMapper {
                 aventureiro.getNivel(),
                 aventureiro.isAtivo(),
                 Optional.ofNullable(aventureiro.getCompanheiro())
+        );
+    }
+
+    public AventureiroResumoResponse toResumoResponse(Aventureiro aventureiro) {
+        return new AventureiroResumoResponse(
+                aventureiro.getId(),
+                aventureiro.getNome(),
+                aventureiro.getClasse(),
+                aventureiro.getNivel(),
+                aventureiro.isAtivo()
         );
     }
 }

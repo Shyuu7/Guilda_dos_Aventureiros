@@ -1,18 +1,18 @@
 package br.com.infnet.guilda_dos_aventureiros.controllers;
 
-import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
 import br.com.infnet.guilda_dos_aventureiros.dto.*;
-import br.com.infnet.guilda_dos_aventureiros.mapper.AventureiroMapper;
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.*;
 import br.com.infnet.guilda_dos_aventureiros.service.AventureiroService;
-import br.com.infnet.guilda_dos_aventureiros.enums.aventura.AventureiroClasses;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Range;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 
+import javax.swing.*;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,45 +20,36 @@ import java.util.List;
 @RequestMapping("/aventureiros")
 public class AventureiroController {
     private final AventureiroService aventureiroService;
-    private final AventureiroMapper aventureiroMapper;
 
     @PostMapping
     public ResponseEntity<AventureiroResponse> criarAventureiro(
             @Valid @RequestBody AventureiroCriacaoRequest request) {
-        Aventureiro aventureiro = aventureiroMapper.toEntity(request);
-        Aventureiro salvoNoRepo = aventureiroService.criarAventureiro(aventureiro);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(aventureiroMapper.toResponse(salvoNoRepo));
+        AventureiroResponse response = aventureiroService.criarAventureiro(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<AventureiroResponse>> listarAventureiros() {
-        List<AventureiroResponse> aventureiros = aventureiroService.listarAventureiros();
+    public ResponseEntity<List<AventureiroResponse>> listarTodosAventureiros
+            (@PageableDefault (sort = "id", direction = Sort.Direction.ASC) Pageable pageable)
+    {
+        List<AventureiroResponse> aventureiros = aventureiroService.findAll(pageable);
         return ResponseEntity.ok(aventureiros);
     }
 
-    @GetMapping("/listarpaginado")
-    public ResponseEntity<List<AventureiroResumoResponse>> listarAventureirosComFiltro(
-            @RequestParam(required = false) AventureiroClasses classe,
-            @RequestParam(required = false) Boolean ativo,
-            @RequestParam(required = false) Integer nivelMinimo,
-            @RequestHeader(value = "X-Page", defaultValue = "0")
-            @Min(value = 0, message = "O número da página deve ser maior ou igual a 0")
-            int page,
-            @RequestHeader(value = "X-Size", defaultValue = "10")
-            @Range(min = 1, max = 50, message = "Apenas é permitido listar até 50 aventureiros por vez")
-            int size
+    @GetMapping("/filtro")
+    public ResponseEntity<PagedResponse<AventureiroResumoResponse>> listarAventureirosComFiltros(
+            @Valid AventureiroFiltroRequest filtro,
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        List<AventureiroResumoResponse> aventureiros = aventureiroService.listarComFiltros(classe, ativo, nivelMinimo, page, size);
-        long totalCount = aventureiroService.contarAventureirosComFiltros(classe, ativo, nivelMinimo);
-        int totalPages = (int) Math.ceil((double) totalCount / size);
+        PagedResponse<AventureiroResumoResponse> pagedResponse = aventureiroService.listarComFiltros(filtro, pageable);
         return ResponseEntity.ok()
-                .header("X-Page", String.valueOf(page))
-                .header("X-Size", String.valueOf(size))
-                .header("X-Total-Count", String.valueOf(totalCount))
-                .header("X-Total-Pages", String.valueOf(totalPages))
-                .body(aventureiros);
+                .header("X-Page", String.valueOf(pagedResponse.page()))
+                .header("X-Size", String.valueOf(pagedResponse.size()))
+                .header("X-Total-Count", String.valueOf(pagedResponse.total()))
+                .header("X-Total-Pages", String.valueOf(pagedResponse.totalPages()))
+                .body(pagedResponse);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<AventureiroResponse> buscarAventureiro(@PathVariable Long id) {
@@ -70,14 +61,14 @@ public class AventureiroController {
     public ResponseEntity<AventureiroResponse> atualizarAventureiro(
             @PathVariable Long id,
             @Valid @RequestBody AventureiroAtualizacaoRequest request) {
-        Aventureiro aventureiro = aventureiroService.atualizarAventureiro(id, request);
-        return ResponseEntity.ok(aventureiroMapper.toResponse(aventureiro));
+        AventureiroResponse response = aventureiroService.atualizarAventureiro(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/desativar")
     public ResponseEntity<Void> desativarAventureiro(@PathVariable Long id) {
         aventureiroService.encerrarVinculo(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/reativar")
@@ -86,13 +77,12 @@ public class AventureiroController {
         return ResponseEntity.noContent().build();
     }
 
-    // GERENCIAMENTO DE COMPANHEIROS
+    // --- GERENCIAMENTO DE COMPANHEIROS ---
     @PostMapping("/{id}/companheiro")
     public ResponseEntity<AventureiroResponse> invocarCompanheiro(
             @PathVariable Long id,
             @Valid @RequestBody CompanheiroCriacaoRequest request) {
-        aventureiroService.invocarCompanheiro(id, request.nome(), request.especie(), request.lealdade());
-        AventureiroResponse response = aventureiroService.buscarPorId(id);
+        AventureiroResponse response = aventureiroService.invocarCompanheiro(id, request);
         return ResponseEntity.ok(response);
     }
 
@@ -101,5 +91,4 @@ public class AventureiroController {
         aventureiroService.banirCompanheiro(id);
         return ResponseEntity.noContent().build();
     }
-
 }
