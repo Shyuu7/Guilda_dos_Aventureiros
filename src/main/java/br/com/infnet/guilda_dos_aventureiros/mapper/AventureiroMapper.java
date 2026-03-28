@@ -1,6 +1,5 @@
 package br.com.infnet.guilda_dos_aventureiros.mapper;
 
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.AventureiroResumoResponse;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
 import br.com.infnet.guilda_dos_aventureiros.dto.aventura.AventureiroCriacaoRequest;
 import br.com.infnet.guilda_dos_aventureiros.dto.aventura.AventureiroResponse;
