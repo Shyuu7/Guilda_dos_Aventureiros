@@ -39,7 +39,7 @@ public class AventureiroController {
     @GetMapping("/filtro")
     public ResponseEntity<PagedResponse<AventureiroResumoResponse>> listarAventureirosComFiltros(
             @Valid AventureiroFiltroRequest filtro,
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+            @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         PagedResponse<AventureiroResumoResponse> pagedResponse = aventureiroService.listarComFiltros(filtro, pageable);
         return ResponseEntity.ok()
