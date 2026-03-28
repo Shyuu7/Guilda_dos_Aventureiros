@@ -5,8 +5,7 @@ CREATE TABLE aventura.companheiros (
    lealdade INT NOT NULL,
    CONSTRAINT fk_companheiro_aventureiro
        FOREIGN KEY(aventureiro_id)
-           REFERENCES aventura.aventureiros(id)
-           ON DELETE CASCADE,
+           REFERENCES aventura.aventureiros(id),
    CONSTRAINT chk_lealdade_range CHECK (lealdade >= 0 AND lealdade <= 100)
 );
 

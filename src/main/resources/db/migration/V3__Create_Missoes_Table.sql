@@ -5,8 +5,8 @@ CREATE TABLE aventura.missoes (
     nivel_perigo VARCHAR(255) NOT NULL,
     status VARCHAR(255) NOT NULL,
     data_criacao TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_inicio DATE,
-    data_termino DATE,
+    data_inicio TIMESTAMP,
+    data_termino TIMESTAMP,
     CONSTRAINT fk_missao_organizacao
         FOREIGN KEY(organizacao_id)
             REFERENCES audit.organizacoes(id)

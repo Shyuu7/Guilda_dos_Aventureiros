@@ -4,7 +4,7 @@ CREATE TABLE aventura.participacoes_missoes (
     papel_missao VARCHAR(255) NOT NULL,
     recompensa_ouro NUMERIC(10, 2),
     destaque BOOLEAN NOT NULL DEFAULT FALSE,
-    data_registro TIMESTAMP WITH TIME ZONE NOT NULL,
+    data_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (missao_id, aventureiro_id),
 
