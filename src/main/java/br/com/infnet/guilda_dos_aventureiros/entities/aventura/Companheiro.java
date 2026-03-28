@@ -1,6 +1,7 @@
 package br.com.infnet.guilda_dos_aventureiros.entities.aventura;
 
 import br.com.infnet.guilda_dos_aventureiros.enums.aventura.CompanheiroEspecies;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class Companheiro {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @PrimaryKeyJoinColumn(name = "aventureiro_id", foreignKey = @ForeignKey(name = "fk_companheiro_aventureiro"))
+    @JsonBackReference
     private Aventureiro aventureiro;
 
     @Column(name = "nome", nullable = false, length = 120)
