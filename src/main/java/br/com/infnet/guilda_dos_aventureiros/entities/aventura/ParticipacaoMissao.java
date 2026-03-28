@@ -2,13 +2,14 @@ package br.com.infnet.guilda_dos_aventureiros.entities.aventura;
 
 import br.com.infnet.guilda_dos_aventureiros.enums.aventura.PapelMissao;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -31,6 +32,7 @@ public class ParticipacaoMissao {
     @Column(name = "papel_missao", nullable = false)
     private PapelMissao papelMissao;
 
+    @PositiveOrZero
     @Column(name = "recompensa_ouro")
     private BigDecimal recompensaEmOuro;
 
@@ -39,5 +41,5 @@ public class ParticipacaoMissao {
 
     @CreationTimestamp
     @Column(name = "data_registro", nullable = false, updatable = false)
-    private OffsetDateTime dataDeRegistro;
+    private LocalDateTime dataDeRegistro;
 }

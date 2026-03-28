@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -27,6 +27,9 @@ public class Missao {
     @JoinColumn(name = "organizacao_id", nullable = false)
     private Organization organizacao;
 
+    @OneToMany(mappedBy = "missao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ParticipacaoMissao> participacoes;
+
     @Column(length = 150, nullable = false)
     private String titulo;
 
@@ -35,16 +38,16 @@ public class Missao {
     private NivelPerigo nivelPerigo;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private StatusMissao status;
 
     @CreationTimestamp
     @Column(name = "data_criacao", nullable = false, updatable = false)
-    private ZonedDateTime dataCriacao;
+    private LocalDateTime dataCriacao;
 
     @Column(name = "data_inicio")
-    private LocalDate dataInicio;
+    private LocalDateTime dataInicio;
 
     @Column(name = "data_termino")
-    private LocalDate dataTermino;
+    private LocalDateTime dataTermino;
 }
