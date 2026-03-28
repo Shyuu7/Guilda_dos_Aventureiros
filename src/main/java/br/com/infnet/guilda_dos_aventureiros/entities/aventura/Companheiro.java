@@ -19,7 +19,6 @@ import org.hibernate.validator.constraints.Range;
 @NoArgsConstructor
 public class Companheiro {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
