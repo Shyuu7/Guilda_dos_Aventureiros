@@ -48,14 +48,4 @@ public class AventureiroFakeRepository {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("Aventureiro não encontrado"));
     }
-
-    public void reativarAventureiro(Long id) {
-        Aventureiro aventureiro = buscarPorId(id);
-        aventureiro.recrutar();
-    }
-
-    public void desativarAventureiro(Long id) {
-        Aventureiro aventureiro = buscarPorId(id);
-        aventureiro.encerrarVinculo();
-    }
 }
