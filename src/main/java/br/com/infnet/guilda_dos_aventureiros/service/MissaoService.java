@@ -16,10 +16,10 @@ import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.MissaoReposit
 import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.ParticipacaoMissaoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +36,10 @@ public class MissaoService {
         return MissaoMapper.toResponse(novaMissao);
     }
 
-    public Page<MissaoResponse> listarMissoes(Pageable pageable) {
-        return missaoRepository.findAll(pageable).map(MissaoMapper::toResponse);
+    public List<MissaoResponse> listarMissoes() {
+        return missaoRepository.findAll().stream()
+                .map(MissaoMapper::toResponse)
+                .toList();
     }
 
     public ParticipacaoResponse adicionarAventureiro(Long idMissao, Long idAventureiro, ParticipacaoRequest request) {
