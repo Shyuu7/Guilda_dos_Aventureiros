@@ -11,8 +11,8 @@ CREATE TABLE aventura.aventureiros (
     data_criacao TIMESTAMP NOT NULL,
     data_atualizacao TIMESTAMP NOT NULL,
 
-    CONSTRAINT fk_aventureiros_org FOREIGN KEY (organizacao_id) REFERENCES audit.organizations(id),
-    CONSTRAINT fk_aventureiros_usuario FOREIGN KEY (usuario_id) REFERENCES audit.users(id)
+    CONSTRAINT fk_aventureiros_org FOREIGN KEY (organizacao_id) REFERENCES audit.organizacoes(id),
+    CONSTRAINT fk_aventureiros_usuario FOREIGN KEY (usuario_id) REFERENCES audit.usuarios(id)
 );
 
 CREATE INDEX idx_aventureiros_org_classe_nivel ON aventura.aventureiros (organizacao_id, classe, nivel);
