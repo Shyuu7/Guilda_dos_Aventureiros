@@ -29,7 +29,6 @@ class AuditRelationshipsDataJpaTest {
                 """, User.class)
                 .setParameter("email", "user.audit@test.com")
                 .getSingleResult();
-
         assertThat(user.getOrganizationUser().getName()).isEqualTo("Org Audit Test");
     }
 
@@ -70,7 +69,7 @@ class AuditRelationshipsDataJpaTest {
         List<Permission> permissions = role.getPermissions();
         assertThat(permissions)
                 .extracting(Permission::getCode)
-                .containsExactlyInAnyOrder("user.read", "user.write");
+                .containsExactly("user.read", "user.write");
     }
 }
 
