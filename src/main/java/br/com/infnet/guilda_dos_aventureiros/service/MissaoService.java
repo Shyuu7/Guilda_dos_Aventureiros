@@ -52,11 +52,11 @@ public class MissaoService {
         Missao missaoExistente = missaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada com o ID: " + id));
 
-        missaoExistente.setTitulo(request.getTitulo());
-        missaoExistente.setNivelPerigo(request.getNivelPerigo());
-        missaoExistente.setStatus(request.getStatus());
-        missaoExistente.setDataInicio(request.getDataInicio());
-        missaoExistente.setDataTermino(request.getDataTermino());
+        missaoExistente.setTitulo(request.titulo());
+        missaoExistente.setNivelPerigo(request.nivelPerigo());
+        missaoExistente.setStatus(request.status());
+        missaoExistente.setDataInicio(request.dataInicio());
+        missaoExistente.setDataTermino(request.dataTermino());
 
         Missao missaoAtualizada = missaoRepository.save(missaoExistente);
         return MissaoMapper.toResponse(missaoAtualizada);
@@ -115,9 +115,9 @@ public class MissaoService {
         ParticipacaoMissao participacaoExistente = participacaoMissaoRepository.findById(participacaoId)
                 .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada para a missão " + idMissao + " e aventureiro " + idAventureiro));
 
-        participacaoExistente.setPapelMissao(request.getPapelMissao());
-        participacaoExistente.setRecompensaEmOuro(request.getRecompensaEmOuro());
-        participacaoExistente.setDestaque(request.isDestaque());
+        participacaoExistente.setPapelMissao(request.papelMissao());
+        participacaoExistente.setRecompensaEmOuro(request.recompensaEmOuro());
+        participacaoExistente.setDestaque(request.destaque());
 
         ParticipacaoMissao participacaoAtualizada = participacaoMissaoRepository.save(participacaoExistente);
         return MissaoMapper.toResponse(participacaoAtualizada);
