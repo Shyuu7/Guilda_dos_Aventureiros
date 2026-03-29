@@ -1,16 +1,13 @@
 package br.com.infnet.guilda_dos_aventureiros.mapper;
 
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.MissaoCriacaoRequest;
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.MissaoResponse;
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.ParticipacaoRequest;
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.ParticipacaoResponse;
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.*;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Missao;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.ParticipacaoMissao;
 import br.com.infnet.guilda_dos_aventureiros.entities.audit.Organization;
-
+import org.springframework.stereotype.Component;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
+@Component
 public class MissaoMapper {
 
     public static Missao toEntity(MissaoCriacaoRequest dto) {
@@ -53,7 +50,10 @@ public class MissaoMapper {
         }
 
         var participacoes = entity.getParticipacoes() != null
-                ? entity.getParticipacoes().stream().map(MissaoMapper::toResponse).collect(Collectors.toList())
+                ? entity.getParticipacoes()
+                  .stream()
+                  .map(MissaoMapper::toResponse)
+                  .toList()
                 : Collections.<ParticipacaoResponse>emptyList();
 
         return new MissaoResponse(

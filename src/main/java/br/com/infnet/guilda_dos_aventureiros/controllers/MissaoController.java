@@ -1,17 +1,16 @@
 package br.com.infnet.guilda_dos_aventureiros.controllers;
 
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.MissaoCriacaoRequest;
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.MissaoResponse;
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.ParticipacaoRequest;
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.ParticipacaoResponse;
+import br.com.infnet.guilda_dos_aventureiros.dto.PagedResponse;
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.*;
 import br.com.infnet.guilda_dos_aventureiros.service.MissaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/missoes")
@@ -26,10 +25,18 @@ public class MissaoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novaMissao);
     }
 
-    @GetMapping
-    public ResponseEntity<List<MissaoResponse>> listarMissoes() {
-        List<MissaoResponse> missoes = missaoService.listarMissoes();
-        return ResponseEntity.ok(missoes);
+    @GetMapping()
+    public ResponseEntity<PagedResponse<MissaoResumoResponse>> listarMissoesComFiltros(
+            MissaoFiltroRequest filtro,
+            @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        PagedResponse<MissaoResumoResponse> pagedResponse = missaoService.listar(filtro, pageable);
+        return ResponseEntity.ok()
+                .header("X-Page", String.valueOf(pagedResponse.page()))
+                .header("X-Size", String.valueOf(pagedResponse.size()))
+                .header("X-Total-Count", String.valueOf(pagedResponse.total()))
+                .header("X-Total-Pages", String.valueOf(pagedResponse.totalPages()))
+                .body(pagedResponse);
     }
 
     @GetMapping("/{id}")

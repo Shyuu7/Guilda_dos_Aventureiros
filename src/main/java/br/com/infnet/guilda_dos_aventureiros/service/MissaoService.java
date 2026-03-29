@@ -1,9 +1,7 @@
 package br.com.infnet.guilda_dos_aventureiros.service;
 
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.MissaoCriacaoRequest;
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.MissaoResponse;
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.ParticipacaoRequest;
-import br.com.infnet.guilda_dos_aventureiros.dto.aventura.ParticipacaoResponse;
+import br.com.infnet.guilda_dos_aventureiros.dto.PagedResponse;
+import br.com.infnet.guilda_dos_aventureiros.dto.aventura.*;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Missao;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.ParticipacaoMissao;
@@ -16,10 +14,10 @@ import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.MissaoReposit
 import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.ParticipacaoMissaoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,10 +34,22 @@ public class MissaoService {
         return MissaoMapper.toResponse(novaMissao);
     }
 
-    public List<MissaoResponse> listarMissoes() {
-        return missaoRepository.findAll().stream()
-                .map(MissaoMapper::toResponse)
-                .toList();
+    public PagedResponse<MissaoResumoResponse> listar(MissaoFiltroRequest filtro, Pageable pageable) {
+        Page<MissaoResumoResponse> responsePage = missaoRepository.findMissoesByFilters(
+                filtro.status(),
+                filtro.nivelPerigo(),
+                filtro.tipoData() != null ? filtro.tipoData().name() : null,
+                filtro.dataMin(),
+                filtro.dataMax(),
+                pageable
+        );
+        return new PagedResponse<>(
+                responsePage.getNumber(),
+                responsePage.getSize(),
+                responsePage.getTotalElements(),
+                responsePage.getTotalPages(),
+                responsePage.getContent()
+        );
     }
 
     public MissaoResponse obterMissaoPorId(Long id) {
@@ -108,7 +118,6 @@ public class MissaoService {
         }
         participacaoMissaoRepository.deleteById(participacaoId);
     }
-
 
     public ParticipacaoResponse atualizarParticipacaoNaMissao(Long idMissao, Long idAventureiro, ParticipacaoRequest request) {
         ParticipacaoMissaoId participacaoId = new ParticipacaoMissaoId(idMissao, idAventureiro);
