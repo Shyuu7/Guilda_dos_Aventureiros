@@ -9,17 +9,11 @@ import org.hibernate.validator.constraints.Length;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
-public class ParticipacaoResponse {
-    @NotNull
-    private Long aventureiroId;
-    @Length(min = 1, max = 120)
-    private String nomeAventureiro;
-    @NotNull
-    private PapelMissao papelMissao;
-    @PositiveOrZero
-    private BigDecimal recompensaEmOuro;
-    @NotNull
-    private boolean destaque;
-    private LocalDateTime dataDeRegistro;
-}
+public record ParticipacaoResponse (
+    Long aventureiroId,
+    String nomeAventureiro,
+    PapelMissao papelMissao,
+    BigDecimal recompensaEmOuro,
+    boolean destaque,
+    LocalDateTime dataDeRegistro
+    ) {}

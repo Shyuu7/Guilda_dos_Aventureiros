@@ -8,21 +8,21 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Data
-public class MissaoCriacaoRequest {
+
+public record MissaoCriacaoRequest(
     @NotBlank
-    private String titulo;
+    String titulo,
 
     @NotNull
-    private NivelPerigo nivelPerigo;
+    NivelPerigo nivelPerigo,
 
     @NotNull
-    private StatusMissao status;
+    StatusMissao status,
 
-    private LocalDateTime dataInicio;
+    LocalDateTime dataInicio,
 
-    private LocalDateTime dataTermino;
+    LocalDateTime dataTermino,
 
     @NotNull
-    private Long organizacaoId;
-}
+    Long organizacaoId
+){}

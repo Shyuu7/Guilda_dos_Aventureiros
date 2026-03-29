@@ -19,66 +19,19 @@ public class MissaoMapper {
         }
 
         Missao missao = new Missao();
-        missao.setTitulo(dto.getTitulo());
-        missao.setNivelPerigo(dto.getNivelPerigo());
-        missao.setStatus(dto.getStatus());
-        missao.setDataInicio(dto.getDataInicio());
-        missao.setDataTermino(dto.getDataTermino());
+        missao.setTitulo(dto.titulo());
+        missao.setNivelPerigo(dto.nivelPerigo());
+        missao.setStatus(dto.status());
+        missao.setDataInicio(dto.dataInicio());
+        missao.setDataTermino(dto.dataTermino());
 
-        if (dto.getOrganizacaoId() != null) {
+        if (dto.organizacaoId() != null) {
             Organization org = new Organization();
-            org.setId(dto.getOrganizacaoId());
+            org.setId(dto.organizacaoId());
             missao.setOrganizacao(org);
         }
 
         return missao;
-    }
-
-    public static MissaoResponse toResponse(Missao missao) {
-        if (missao == null) {
-            return null;
-        }
-
-        MissaoResponse dto = new MissaoResponse();
-        dto.setId(missao.getId());
-        dto.setTitulo(missao.getTitulo());
-        dto.setNivelPerigo(missao.getNivelPerigo());
-        dto.setStatus(missao.getStatus());
-        dto.setDataInicio(missao.getDataInicio());
-        dto.setDataTermino(missao.getDataTermino());
-
-        if (missao.getOrganizacao() != null) {
-            dto.setOrganizacaoId(missao.getOrganizacao().getId());
-        }
-
-        if (missao.getParticipacoes() != null && !missao.getParticipacoes().isEmpty()) {
-            dto.setParticipacoes(
-                    missao.getParticipacoes().stream()
-                            .map(MissaoMapper::toResponse)
-                            .collect(Collectors.toList())
-            );
-        } else {
-            dto.setParticipacoes(Collections.emptyList());
-        }
-        return dto;
-    }
-
-    public static ParticipacaoResponse toResponse(ParticipacaoMissao participacaoMissao) {
-        if (participacaoMissao == null) {
-            return null;
-        }
-
-        ParticipacaoResponse dto = new ParticipacaoResponse();
-        if (participacaoMissao.getAventureiro() != null) {
-            dto.setAventureiroId(participacaoMissao.getAventureiro().getId());
-            dto.setNomeAventureiro(participacaoMissao.getAventureiro().getNome());
-        }
-
-        dto.setPapelMissao(participacaoMissao.getPapelMissao());
-        dto.setRecompensaEmOuro(participacaoMissao.getRecompensaEmOuro());
-        dto.setDestaque(participacaoMissao.isDestaque());
-        dto.setDataDeRegistro(participacaoMissao.getDataDeRegistro());
-        return dto;
     }
 
     public static ParticipacaoMissao toEntity(ParticipacaoRequest dto) {
@@ -86,10 +39,47 @@ public class MissaoMapper {
             return null;
         }
 
-        ParticipacaoMissao entity = new ParticipacaoMissao();
-        entity.setPapelMissao(dto.getPapelMissao());
-        entity.setRecompensaEmOuro(dto.getRecompensaEmOuro());
-        entity.setDestaque(dto.isDestaque());
-        return entity;
+        ParticipacaoMissao participacao = new ParticipacaoMissao();
+        participacao.setPapelMissao(dto.papelMissao());
+        participacao.setRecompensaEmOuro(dto.recompensaEmOuro());
+        participacao.setDestaque(dto.destaque());
+
+        return participacao;
+    }
+
+    public static MissaoResponse toResponse(Missao entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        var participacoes = entity.getParticipacoes() != null
+                ? entity.getParticipacoes().stream().map(MissaoMapper::toResponse).collect(Collectors.toList())
+                : Collections.<ParticipacaoResponse>emptyList();
+
+        return new MissaoResponse(
+                entity.getId(),
+                entity.getTitulo(),
+                entity.getNivelPerigo(),
+                entity.getStatus(),
+                entity.getDataInicio(),
+                entity.getDataTermino(),
+                entity.getOrganizacao() != null ? entity.getOrganizacao().getId() : null,
+                participacoes
+        );
+    }
+
+    public static ParticipacaoResponse toResponse(ParticipacaoMissao entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return new ParticipacaoResponse(
+                entity.getAventureiro() != null ? entity.getAventureiro().getId() : null,
+                entity.getAventureiro() != null ? entity.getAventureiro().getNome() : null,
+                entity.getPapelMissao(),
+                entity.getRecompensaEmOuro(),
+                entity.isDestaque(),
+                entity.getDataDeRegistro()
+        );
     }
 }

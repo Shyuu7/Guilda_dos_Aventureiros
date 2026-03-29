@@ -7,12 +7,15 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Data
-public class ParticipacaoRequest {
+
+public record ParticipacaoRequest(
     @NotNull
-    private PapelMissao papelMissao;
+    PapelMissao papelMissao,
+
     @PositiveOrZero
-    private BigDecimal recompensaEmOuro;
+    BigDecimal recompensaEmOuro,
+
     @NotNull
-    private boolean destaque;
-}
+    boolean destaque
+){}
+
