@@ -32,6 +32,12 @@ public class MissaoController {
         return ResponseEntity.ok(missoes);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<MissaoResponse> obterMissaoPorId(@PathVariable Long id) {
+        MissaoResponse missao = missaoService.obterMissaoPorId(id);
+        return ResponseEntity.ok(missao);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<MissaoResponse> atualizarMissao(@PathVariable Long id, @Valid @RequestBody MissaoCriacaoRequest request) {
         MissaoResponse missaoAtualizada = missaoService.atualizarMissao(id, request);
@@ -49,7 +55,27 @@ public class MissaoController {
             @PathVariable Long idMissao,
             @PathVariable Long idAventureiro,
             @Valid @RequestBody ParticipacaoRequest request) {
-        ParticipacaoResponse novaParticipacao = missaoService.adicionarAventureiro(idMissao, idAventureiro, request);
+        ParticipacaoResponse novaParticipacao = missaoService.adicionarAventureiroNaMissao(idMissao, idAventureiro, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaParticipacao);
     }
+
+    @PutMapping("/{idMissao}/participantes/{idAventureiro}")
+    public ResponseEntity<ParticipacaoResponse> atualizarParticipacao(
+            @PathVariable Long idMissao,
+            @PathVariable Long idAventureiro,
+            @Valid @RequestBody ParticipacaoRequest request) {
+        ParticipacaoResponse participacaoAtualizada = missaoService.atualizarParticipacaoNaMissao(idMissao, idAventureiro, request);
+        return ResponseEntity.ok(participacaoAtualizada);
+    }
+
+    @DeleteMapping("/{idMissao}/participantes/{idAventureiro}")
+    public ResponseEntity<Void> removerAventureiro(
+            @PathVariable Long idMissao,
+            @PathVariable Long idAventureiro) {
+        missaoService.removerAventureiroDaMissao(idMissao, idAventureiro);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 }
