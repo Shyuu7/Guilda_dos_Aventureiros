@@ -42,7 +42,35 @@ public class MissaoService {
                 .toList();
     }
 
-    public ParticipacaoResponse adicionarAventureiro(Long idMissao, Long idAventureiro, ParticipacaoRequest request) {
+    public MissaoResponse obterMissaoPorId(Long id) {
+        Missao missao = missaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada com o ID: " + id));
+        return MissaoMapper.toResponse(missao);
+    }
+
+    public MissaoResponse atualizarMissao(Long id, MissaoCriacaoRequest request) {
+        Missao missaoExistente = missaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada com o ID: " + id));
+
+        missaoExistente.setTitulo(request.getTitulo());
+        missaoExistente.setNivelPerigo(request.getNivelPerigo());
+        missaoExistente.setStatus(request.getStatus());
+        missaoExistente.setDataInicio(request.getDataInicio());
+        missaoExistente.setDataTermino(request.getDataTermino());
+
+        Missao missaoAtualizada = missaoRepository.save(missaoExistente);
+        return MissaoMapper.toResponse(missaoAtualizada);
+    }
+
+    public void removerMissao(Long id) {
+        if (!missaoRepository.existsById(id)) {
+            throw new EntityNotFoundException("Missão não encontrada com o ID: " + id);
+        }
+        missaoRepository.deleteById(id);
+    }
+
+    //-- GERENCIAMENTO DE PARTICIPAÇÕES EM MISSÕES --
+    public ParticipacaoResponse adicionarAventureiroNaMissao(Long idMissao, Long idAventureiro, ParticipacaoRequest request) {
         Missao missao = missaoRepository.findById(idMissao)
                 .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada com o ID: " + idMissao));
 
@@ -73,24 +101,25 @@ public class MissaoService {
         return MissaoMapper.toResponse(novaParticipacao);
     }
 
-    public MissaoResponse atualizarMissao(Long id, MissaoCriacaoRequest request) {
-        Missao missaoExistente = missaoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Missão não encontrada com o ID: " + id));
-
-        missaoExistente.setTitulo(request.getTitulo());
-        missaoExistente.setNivelPerigo(request.getNivelPerigo());
-        missaoExistente.setStatus(request.getStatus());
-        missaoExistente.setDataInicio(request.getDataInicio());
-        missaoExistente.setDataTermino(request.getDataTermino());
-
-        Missao missaoAtualizada = missaoRepository.save(missaoExistente);
-        return MissaoMapper.toResponse(missaoAtualizada);
+    public void removerAventureiroDaMissao(Long idMissao, Long idAventureiro) {
+        ParticipacaoMissaoId participacaoId = new ParticipacaoMissaoId(idMissao, idAventureiro);
+        if (!participacaoMissaoRepository.existsById(participacaoId)) {
+            throw new EntityNotFoundException("Participação não encontrada para a missão " + idMissao + " e aventureiro " + idAventureiro);
+        }
+        participacaoMissaoRepository.deleteById(participacaoId);
     }
 
-    public void removerMissao(Long id) {
-        if (!missaoRepository.existsById(id)) {
-            throw new EntityNotFoundException("Missão não encontrada com o ID: " + id);
-        }
-        missaoRepository.deleteById(id);
+
+    public ParticipacaoResponse atualizarParticipacaoNaMissao(Long idMissao, Long idAventureiro, ParticipacaoRequest request) {
+        ParticipacaoMissaoId participacaoId = new ParticipacaoMissaoId(idMissao, idAventureiro);
+        ParticipacaoMissao participacaoExistente = participacaoMissaoRepository.findById(participacaoId)
+                .orElseThrow(() -> new EntityNotFoundException("Participação não encontrada para a missão " + idMissao + " e aventureiro " + idAventureiro));
+
+        participacaoExistente.setPapelMissao(request.getPapelMissao());
+        participacaoExistente.setRecompensaEmOuro(request.getRecompensaEmOuro());
+        participacaoExistente.setDestaque(request.isDestaque());
+
+        ParticipacaoMissao participacaoAtualizada = participacaoMissaoRepository.save(participacaoExistente);
+        return MissaoMapper.toResponse(participacaoAtualizada);
     }
 }
