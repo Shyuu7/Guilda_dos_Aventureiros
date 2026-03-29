@@ -346,3 +346,8 @@ INSERT INTO aventura.participacoes_missoes (missao_id, aventureiro_id, papel_mis
 (99, 93, 'COMBATENTE', 500.00, false, CURRENT_TIMESTAMP),
 (100, 94, 'LIDER', 100000.00, true, CURRENT_TIMESTAMP),
 (100, 95, 'COMBATENTE', 50000.00, false, CURRENT_TIMESTAMP);
+
+SELECT setval('audit.organizacoes_id_seq', (SELECT MAX(id) FROM audit.organizacoes), true);
+SELECT setval('audit.usuarios_id_seq', (SELECT MAX(id) FROM audit.usuarios), true);
+SELECT setval('aventura.aventureiros_id_seq', (SELECT MAX(id) FROM aventura.aventureiros), true);
+SELECT setval('aventura.missoes_id_seq', (SELECT MAX(id) FROM aventura.missoes), true);
