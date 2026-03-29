@@ -68,6 +68,24 @@ public class AventureiroService {
     }
 
     @Transactional(readOnly = true)
+    public PagedResponse<AventureiroResumoResponse> buscarPorNome(String nome, Pageable pageable) {
+        Page<Aventureiro> aventureirosPage = aventureiroRepository.findByNomeContainingIgnoreCase(nome, pageable);
+
+        List<AventureiroResumoResponse> conteudo = aventureirosPage.getContent().stream()
+                .map(aventureiroMapper::toResumoResponse)
+                .toList();
+
+        return new PagedResponse<>(
+                aventureirosPage.getNumber(),
+                aventureirosPage.getSize(),
+                aventureirosPage.getTotalElements(),
+                aventureirosPage.getTotalPages(),
+                conteudo
+        );
+    }
+
+
+    @Transactional(readOnly = true)
     public AventureiroResponse buscarPorId(Long id) {
         return aventureiroRepository.findById(id)
                 .map(aventureiroMapper::toResponse)

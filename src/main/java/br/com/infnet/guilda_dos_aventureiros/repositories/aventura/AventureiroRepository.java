@@ -26,4 +26,6 @@ public interface AventureiroRepository extends JpaRepository<Aventureiro, Long> 
             Pageable pageable
     );
 
+    Page<Aventureiro> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
+
 }

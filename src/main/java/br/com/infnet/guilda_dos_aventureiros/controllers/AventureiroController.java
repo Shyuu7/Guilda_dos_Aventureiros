@@ -49,6 +49,15 @@ public class AventureiroController {
                 .body(pagedResponse);
     }
 
+    @GetMapping("/buscar")
+    public ResponseEntity<PagedResponse<AventureiroResumoResponse>> buscarPorNome(
+            @RequestParam String nome,
+            Pageable pageable
+    ) {
+        PagedResponse<AventureiroResumoResponse> pagedResponse = aventureiroService.buscarPorNome(nome, pageable);
+        return ResponseEntity.ok(pagedResponse);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<AventureiroResponse> buscarAventureiro(@PathVariable Long id) {
