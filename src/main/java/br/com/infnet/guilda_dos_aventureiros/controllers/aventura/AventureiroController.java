@@ -1,8 +1,8 @@
-package br.com.infnet.guilda_dos_aventureiros.controllers;
+package br.com.infnet.guilda_dos_aventureiros.controllers.aventura;
 
 import br.com.infnet.guilda_dos_aventureiros.dto.*;
 import br.com.infnet.guilda_dos_aventureiros.dto.aventura.*;
-import br.com.infnet.guilda_dos_aventureiros.service.AventureiroService;
+import br.com.infnet.guilda_dos_aventureiros.service.aventura.AventureiroService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-
-import javax.swing.*;
 import java.util.List;
 
 @RequiredArgsConstructor

@@ -1,8 +1,8 @@
-package br.com.infnet.guilda_dos_aventureiros.controllers;
+package br.com.infnet.guilda_dos_aventureiros.controllers.aventura;
 
 import br.com.infnet.guilda_dos_aventureiros.dto.PagedResponse;
 import br.com.infnet.guilda_dos_aventureiros.dto.aventura.*;
-import br.com.infnet.guilda_dos_aventureiros.service.MissaoService;
+import br.com.infnet.guilda_dos_aventureiros.service.aventura.MissaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

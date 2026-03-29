@@ -1,4 +1,4 @@
-package br.com.infnet.guilda_dos_aventureiros.service;
+package br.com.infnet.guilda_dos_aventureiros.service.aventura;
 
 import br.com.infnet.guilda_dos_aventureiros.dto.*;
 import br.com.infnet.guilda_dos_aventureiros.dto.aventura.*;
