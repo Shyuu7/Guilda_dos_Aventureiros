@@ -65,6 +65,12 @@ public class AventureiroController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}/perfil")
+    public ResponseEntity<AventureiroProfileResponse> buscarAventureiroPorId(@PathVariable Long id) {
+        AventureiroProfileResponse aventureiro = aventureiroService.buscarDetalhesAventureiro(id);
+        return ResponseEntity.ok(aventureiro);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<AventureiroResponse> atualizarAventureiro(
             @PathVariable Long id,

@@ -6,12 +6,14 @@ import br.com.infnet.guilda_dos_aventureiros.entities.audit.Organization;
 import br.com.infnet.guilda_dos_aventureiros.entities.audit.User;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Companheiro;
+import br.com.infnet.guilda_dos_aventureiros.entities.aventura.ParticipacaoMissao;
 import br.com.infnet.guilda_dos_aventureiros.exceptions.BusinessRuleException;
 import br.com.infnet.guilda_dos_aventureiros.exceptions.EntityNotFoundException;
 import br.com.infnet.guilda_dos_aventureiros.mapper.AventureiroMapper;
 import br.com.infnet.guilda_dos_aventureiros.repositories.audit.OrganizationRepository;
 import br.com.infnet.guilda_dos_aventureiros.repositories.audit.UserRepository;
 import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.AventureiroRepository;
+import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.ParticipacaoMissaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class AventureiroService {
     private final AventureiroMapper aventureiroMapper;
     private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
+    private final ParticipacaoMissaoRepository participacaoMissaoRepository;
 
     @Transactional
     public AventureiroResponse criarAventureiro(AventureiroCriacaoRequest request) {
@@ -81,6 +85,38 @@ public class AventureiroService {
                 aventureirosPage.getTotalElements(),
                 aventureirosPage.getTotalPages(),
                 conteudo
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public AventureiroProfileResponse buscarDetalhesAventureiro(Long id) {
+        Aventureiro aventureiro = aventureiroRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Aventureiro com ID " + id + " não encontrado."));
+
+        long totalMissoes = participacaoMissaoRepository.countByAventureiroId(id);
+
+        Optional<ParticipacaoMissao> ultimaParticipacaoOpt = participacaoMissaoRepository.findFirstByAventureiroIdOrderByDataDeRegistroDesc(id);
+        ParticipacaoResumoResponse ultimaMissaoDto = ultimaParticipacaoOpt
+                .map(aventureiroMapper::toResumoResponse)
+                .orElse(null);
+
+        CompanheiroResponse companheiroDto = (aventureiro.getCompanheiro() != null)
+                ? new CompanheiroResponse(
+                        aventureiro.getCompanheiro().getId(),
+                        aventureiro.getCompanheiro().getNome(),
+                        aventureiro.getCompanheiro().getEspecie(),
+                        aventureiro.getCompanheiro().getLealdade()
+                ) : null;
+
+        return new AventureiroProfileResponse(
+                aventureiro.getId(),
+                aventureiro.getNome(),
+                aventureiro.getClasse(),
+                aventureiro.getNivel(),
+                aventureiro.isAtivo(),
+                companheiroDto,
+                totalMissoes,
+                ultimaMissaoDto
         );
     }
 
