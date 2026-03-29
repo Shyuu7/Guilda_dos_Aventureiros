@@ -1,5 +1,7 @@
 package br.com.infnet.guilda_dos_aventureiros.mapper;
 
+import br.com.infnet.guilda_dos_aventureiros.dto.audit.OrganizationResponse;
+import br.com.infnet.guilda_dos_aventureiros.dto.audit.UserResponse;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Aventureiro;
 import br.com.infnet.guilda_dos_aventureiros.dto.aventura.AventureiroCriacaoRequest;
 import br.com.infnet.guilda_dos_aventureiros.dto.aventura.AventureiroResponse;
@@ -18,11 +20,23 @@ public class AventureiroMapper {
     }
 
     public AventureiroResponse toResponse(Aventureiro aventureiro) {
+        OrganizationResponse orgResponse = new OrganizationResponse(
+                aventureiro.getOrganizacao().getId(),
+                aventureiro.getOrganizacao().getName()
+        );
+
+        UserResponse userResponse = new UserResponse(
+                aventureiro.getUsuario().getId(),
+                aventureiro.getUsuario().getName()
+        );
+
         return new AventureiroResponse(
                 aventureiro.getId(),
                 aventureiro.getNome(),
                 aventureiro.getClasse(),
                 aventureiro.getNivel(),
+                orgResponse,
+                userResponse,
                 aventureiro.isAtivo(),
                 Optional.ofNullable(aventureiro.getCompanheiro())
         );
