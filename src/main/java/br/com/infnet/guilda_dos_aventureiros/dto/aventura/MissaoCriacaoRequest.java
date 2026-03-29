@@ -4,7 +4,6 @@ import br.com.infnet.guilda_dos_aventureiros.enums.aventura.NivelPerigo;
 import br.com.infnet.guilda_dos_aventureiros.enums.aventura.StatusMissao;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
 import java.time.LocalDateTime;
 
