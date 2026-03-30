@@ -26,195 +26,161 @@ Com o aumento das expedições e o surgimento de novas ameaças, o Conselho da G
 - ✅ **Filtro por classe** - GUERREIRO, MAGO, ARQUEIRO, CLERIGO, LADINO
 - ✅ **Filtro por status** - Aventureiros ativos ou inativos
 - ✅ **Filtro por nível mínimo** - Buscar por experiência
-- ✅ **Paginação via headers** - X-Page e X-Size para controle
+- ✅ **Paginação** - Informações de total de páginas, total de elementos e página atual
 - ✅ **Metadados de paginação** - Headers de resposta com informações completas
 - ✅ **Lista vazia para páginas inexistentes** - Tratamento adequado
 
-### População Automática
-- ✅ **100 aventureiros pré-cadastrados** - Gerados automaticamente na inicialização
-- ✅ **Nomes aleatórios** - Usando biblioteca JavaFaker com nomes de Elder Scrolls
-- ✅ **Classes e níveis diversificados** - Distribuição aleatória
-
-### Validações Rigorosas
-- ✅ Nome obrigatório e não vazio
-- ✅ Classe deve pertencer ao conjunto permitido
-- ✅ Nível maior ou igual a 1
-- ✅ Validação de parâmetros de paginação (página ≥ 0, tamanho 1-50)
-- ✅ Validação de companheiros (nome, espécie, lealdade)
+Este projeto é uma API REST para gerenciar uma guilda de aventureiros, suas missões e recompensas.
 
 ## Tecnologias Utilizadas
 
 - **Java 25**
-- **Spring Boot 4.0.2** - Framework principal
-- **Spring Web** - Controllers REST
-- **Spring Validation** - Validações customizadas
-- **Lombok** - Redução de boilerplate
-- **JavaFaker 1.0.2** - Geração de dados fictícios
-- **Maven** - Gerenciamento de dependências
+- **Spring Boot**: Framework principal para construção da aplicação.
+- **Spring Data JPA**: Para persistência de dados e abstração de repositórios.
+- **PostgreSQL**: Banco de dados principal para produção e desenvolvimento.
+- **Flyway**: Ferramenta para versionamento e migração de schema do banco de dados.
+- **H2 Database**: Banco de dados em memória utilizado para a execução de testes de integração automatizados.
+- **Lombok**: Para reduzir código boilerplate (getters, setters, construtores).
+- **JUnit 5**: Para a escrita de testes unitários e de integração.
 
-## Arquitetura
+## Estrutura do Projeto
 
-### Estrutura em Camadas
-```
-├── Controller    # Endpoints REST (AventureiroController)
-├── Service       # Regras de negócio (AventureiroService)
-├── Repository    # Acesso a dados (AventureiroRepository)
-├── Domain        # Entidades (Aventureiro, Companheiro)
-├── DTO          # Objetos de transferência de dados
-├── Mapper       # Conversão entre DTOs e entidades
-├── Enums        # Classes e Espécies
-└── Exceptions   # Tratamento de erros customizados
-```
+O projeto está organizado em módulos lógicos, com uma separação clara entre as responsabilidades de cada camada (Controllers, Services, Repositories, Entities).
 
-### Fluxo de Dados
-1. **Entrada**: Controller recebe requisições HTTP
-2. **Validação**: DTOs validam dados de entrada
-3. **Processamento**: Service aplica regras de negócio
-4. **Persistência**: Repository gerencia dados em memória
-5. **Resposta**: Mapper converte entidades para DTOs de resposta
+### Banco de Dados e Migrações
+
+A estrutura do banco de dados é gerenciada pelo **Flyway**.
+
+- **Produção/Desenvolvimento (`db/migration`)**: Os scripts localizados em `src/main/resources/db/migration` contêm as migrações para o banco de dados **PostgreSQL**. Eles são responsáveis por criar e evoluir o schema da aplicação principal.
+
+- **Testes (`db/migration-h2`)**: Para garantir um ambiente de testes isolado e rápido, utilizamos o banco de dados em memória **H2**. Os scripts de migração específicos para o H2 estão em `src/test/resources/db/migration-h2`. Eles possuem a sintaxe SQL compatível com o H2 e são executados automaticamente antes dos testes de integração.
+
+## Configuração do Ambiente de Teste
+
+Para rodar os testes, nenhuma configuração manual é necessária. O projeto está configurado para:
+1.  Ativar o perfil `test` do Spring Boot.
+2.  Subir uma instância do banco de dados H2 em memória.
+3.  Executar o **Flyway** para limpar o banco (`clean`) e aplicar as migrações (`migrate`) a partir da pasta `db/migration-h2`, criando todo o schema e populando com dados de teste.
+4.  Executar os testes de repositório (`@DataJpaTest`) contra essa base de dados limpa e pré-configurada.
+
+Isso garante que os testes sejam consistentes, repetíveis e não interfiram no banco de dados de desenvolvimento ou produção.
 
 ## Endpoints da API
 
-### 🔷 Aventureiros
+### 🔷 Aventureiros (`/aventureiros`)
 
-#### Registrar Aventureiro
-```http
-POST /aventureiros
-Content-Type: application/json
+-   **`POST /`**: Registra um novo aventureiro.
+    ```json
+    {
+      "nome": "Aragorn",
+      "classe": "GUERREIRO",
+      "nivel": 15,
+      "organizacaoId": 1,
+      "usuarioId": 1
+    }
+    ```
 
-{
-  "nome": "Aragorn",
-  "classe": "GUERREIRO",
-  "nivel": 20
-}
-```
-**Resposta**: Status 201 Created + dados completos do aventureiro
+-   **`GET /`**: Lista todos os aventureiros (sem paginação).
+-   **`GET /filtro`**: Lista aventureiros com filtros por `classe`, `ativo`, `nivelMinimo` e com paginação.
+-   **`GET /buscar`**: Busca aventureiros por nome com paginação.
+-   **`GET /{id}`**: Consulta os dados básicos de um aventureiro por ID.
+-   **`GET /{id}/perfil`**: Consulta um perfil detalhado do aventureiro, incluindo suas participações em missões.
+-   **`PUT /{id}`**: Atualiza os dados de um aventureiro.
+    ```json
+    {
+      "nome": "Aragorn, o Rei",
+      "classe": "GUERREIRO",
+      "nivel": 20
+    }
+    ```
 
-#### Listar Aventureiros (com filtros e paginação)
-```http
-GET /aventureiros?classe=GUERREIRO&ativo=true&nivelMinimo=10
-Headers:
-  X-Page: 0
-  X-Size: 10
-```
-**Filtros opcionais**:
-- `classe`: GUERREIRO, MAGO, ARQUEIRO, CLERIGO, LADINO
-- `ativo`: true/false
-- `nivelMinimo`: número inteiro
+-   **`PATCH /{id}/desativar`**: Desativa o cadastro de um aventureiro.
+-   **`PATCH /{id}/reativar`**: Reativa o cadastro de um aventureiro.
+-   **`POST /{id}/companheiro`**: Adiciona um companheiro a um aventureiro.
+    ```json
+    {
+      "nome": "Brego",
+      "especie": "CAVALO",
+      "lealdade": 100
+    }
+    ```
 
-**Headers de resposta**:
-- `X-Page`: Página atual
-- `X-Size`: Itens por página
-- `X-Total-Count`: Total de itens
-- `X-Total-Pages`: Total de páginas
+### 🔶 Missões (`/missoes`)
 
-#### Consultar por ID
-```http
-GET /aventureiros/1
-```
-**Resposta**: Dados completos incluindo companheiro (se existir)
+-   **`POST /`**: Cria uma nova missão.
+    ```json
+    {
+      "titulo": "Resgatar o Artefato Perdido",
+      "nivelPerigo": "ALTO",
+      "status": "DISPONIVEL",
+      "dataInicio": "2026-04-01T10:00:00",
+      "dataTermino": "2026-04-10T18:00:00",
+      "organizacaoId": 1
+    }
+    ```
 
-#### Atualizar Aventureiro
-```http
-PUT /aventureiros/1
-Content-Type: application/json
+-   **`GET /`**: Lista missões com filtros por `status`, `titulo`, `nivelRecomendado` e com paginação.
+-   **`GET /{id}`**: Consulta os detalhes de uma missão por ID.
+-   **`PUT /{id}`**: Atualiza os dados de uma missão.
+    ```json
+    {
+      "titulo": "Resgatar o Artefato Perdido de Valinor",
+      "nivelPerigo": "CRITICO",
+      "status": "EM_ANDAMENTO",
+      "dataInicio": "2026-04-01T10:00:00",
+      "dataTermino": "2026-04-15T20:00:00",
+      "organizacaoId": 1
+    }
+    ```
 
-{
-  "nome": "Aragorn Rei",
-  "classe": "GUERREIRO",
-  "nivel": 25
-}
-```
-**Permite alterar**: nome, classe, nível  
-**Não permite alterar**: ID, status ativo, companheiro
+-   **`DELETE /{id}`**: Remove uma missão do sistema.
+-   **`POST /{idMissao}/participantes/{idAventureiro}`**: Adiciona um aventureiro como participante de uma missão.
+    ```json
+    {
+      "papelMissao": "LIDER",
+      "recompensaEmOuro": 500.00,
+      "destaque": true
+    }
+    ```
 
-#### Desativar Aventureiro
-```http
-PATCH /aventureiros/1/desativar
-```
-**Resultado**: Aventureiro fica inativo mas permanece no sistema
+-   **`PUT /{idMissao}/participantes/{idAventureiro}`**: Atualiza os dados da participação de um aventureiro em uma missão (ex: recompensa).
+    ```json
+    {
+      "papelMissao": "LIDER",
+      "recompensaEmOuro": 750.50,
+      "destaque": true
+    }
+    ```
 
-#### Reativar Aventureiro
-```http
-PATCH /aventureiros/1/reativar
-```
-**Resultado**: Aventureiro volta a ficar ativo
+-   **`DELETE /{idMissao}/participantes/{idAventureiro}`**: Remove um aventureiro de uma missão.
 
-### 🔶 Companheiros
+### 📈 Relatórios (`/relatorios`)
 
-#### Invocar Companheiro
-```http
-POST /aventureiros/1/companheiro
-Content-Type: application/json
+-   **`GET /ranking`**: Gera um ranking de aventureiros baseado em seu desempenho em missões. Permite filtros por `status` da missão e por `período` (data de início e término).
 
-{
-  "nome": "Fenrir",
-  "especie": "LOBO",
-  "lealdade": 85
-}
-```
-**Espécies disponíveis**: LOBO, CORUJA, GOLEM, DRAGAO_MINIATURA
+    **Exemplos de Uso:**
 
-#### Banir Companheiro
-```http
-DELETE /aventureiros/1/companheiro
-```
-**Resultado**: Remove o companheiro do aventureiro
+    -   **Ranking geral (sem filtros):**
+        `/relatorios/ranking`
 
-## Classes e Espécies Permitidas
+    -   **Ranking de missões concluídas:**
+        `/relatorios/ranking?status=CONCLUIDA`
 
-### Classes de Aventureiros
-- `GUERREIRO` - Especialista em combate corpo a corpo
-- `MAGO` - Manipulador das artes arcanas  
-- `ARQUEIRO` - Mestre em combate à distância
-- `CLERIGO` - Curandeiro e protetor divino
-- `LADINO` - Especialista em furtividade e precisão
+    -   **Ranking em um período específico:**
+        `/relatorios/ranking?inicio=2026-01-01T00:00:00&termino=2026-03-31T23:59:59`
 
-### Espécies de Companheiros
-- `LOBO` - Companheiro leal e selvagem
-- `CORUJA` - Sábia observadora dos céus
-- `GOLEM` - Guardião mágico resistente
-- `DRAGAO_MINIATURA` - Pequeno mas feroz dragão
+    -   **Ranking de missões em andamento em um período:**
+        `/relatorios/ranking?status=EM_ANDAMENTO&inicio=2026-03-01T00:00:00&termino=2026-03-30T23:59:59`
 
-## Regras de Negócio Implementadas
+-   **`GET /missoes`**: Gera um relatório de missões, mostrando o total de participantes e a recompensa total. Permite filtrar por `período`.
 
-### Aventureiros
-- **Registro automático como ativo**: Todo aventureiro inicia ativo automaticamente
-- **ID gerado automaticamente**: Sistema gera ID sequencial único
-- **Validações rigorosas**: Nome obrigatório, classe válida, nível ≥ 1
-- **População inicial**: 100 aventureiros pré-cadastrados com dados aleatórios
-- **Nomes fictícios**: Gerados pela biblioteca JavaFaker (Elder Scrolls)
+    **Exemplos de Uso:**
 
-### Atualização de Dados
-- **Campos editáveis**: Apenas nome, classe e nível podem ser alterados
-- **Campos protegidos**: ID, status ativo e companheiro são imutáveis via atualização
-- **Endpoints específicos**: Status ativo possui endpoints dedicados (desativar/reativar)
+    -   **Relatório geral (sem filtros):**
+        `/relatorios/missoes`
 
-### Sistema de Listagem
-- **Filtros opcionais**: Por classe, status ativo e nível mínimo
-- **Filtros combinados**: Múltiplos filtros podem ser aplicados simultaneamente
-- **Paginação obrigatória**: Sempre retorna resultados paginados
-- **Metadados completos**: Headers informam estado atual da paginação
-
-### Companheiros
-- **Vinculação única**: Cada aventureiro pode ter apenas um companheiro
-- **Espécies controladas**: Apenas espécies pré-definidas são permitidas
-- **Sistema de lealdade**: Valor numérico representa a lealdade do companheiro
-- **Gestão independente**: Companheiros possuem endpoints específicos
-
-### Persistência em Memória
-- **ArrayList interno**: Dados armazenados em memória durante execução
-- **Perda de dados**: Dados são perdidos ao reiniciar a aplicação
-- **Performance otimizada**: Acesso rápido aos dados sem overhead de BD
-
-## Headers de Resposta
-
-```
-X-Page: 0
-X-Size: 10
-X-Total-Count: 150
-X-Total-Pages: 15
-```
+    -   **Relatório de missões em um período específico:**
+        `/relatorios/missoes?inicio=2026-01-01T00:00:00&termino=2026-03-31T23:59:59`
 
 ## Como Executar
 
@@ -227,68 +193,17 @@ X-Total-Pages: 15
 1. **Clone o repositório**:
 ```bash
 git clone https://github.com/Shyuu7/Guilda_dos_Aventureiros.git
+cd Guilda_dos_Aventureiros
 ```
 
 2. **Execute com Maven**:
 ```bash
 mvn spring-boot:run
 ```
+A aplicação estará disponível em `http://localhost:8080`.
 
-3. **Alternativa - Compilar e executar**:
+### Executando os Testes
 ```bash
-mvn clean compile
-mvn exec:java -Dexec.mainClass="br.com.infnet.guilda_dos_aventureiros.MainApplication"
+mvn test
 ```
-
-### Acesso à API
-- **URL Base**: `http://localhost:8080`
-- **Endpoints**: `/aventureiros`
-- **Dados iniciais**: 100 aventureiros são criados automaticamente na inicialização
-
-### Testando a API
-
-**Listar aventureiros**:
-```bash
-curl -X GET "http://localhost:8080/aventureiros" \
-  -H "X-Page: 0" \
-  -H "X-Size: 10"
-```
-
-**Criar aventureiro**:
-```bash
-curl -X POST "http://localhost:8080/aventureiros" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nome": "Teste Aventureiro",
-    "classe": "GUERREIRO",
-    "nivel": 15
-  }'
-```
-
-## Validações Implementadas
-
-### Aventureiros
-- **Nome**: Obrigatório e não pode estar em branco
-- **Classe**: Deve ser uma das 5 classes permitidas (GUERREIRO, MAGO, ARQUEIRO, CLERIGO, LADINO)
-- **Nível**: Maior ou igual a 1, valor positivo obrigatório
-
-### Paginação
-- **Página (X-Page)**: Deve ser maior ou igual a 0
-- **Tamanho (X-Size)**: Entre 1 e 50 itens por página
-
-### Companheiros
-- **Nome**: Obrigatório e não pode estar em branco
-- **Espécie**: Deve ser uma das 4 espécies permitidas (LOBO, CORUJA, GOLEM, DRAGAO_MINIATURA)
-- **Lealdade**: Valor numérico positivo ou zero
-
-### Filtros de Busca
-- **Classe**: Opcional, deve ser classe válida se informada
-- **Status Ativo**: Opcional, boolean (true/false)
-- **Nível Mínimo**: Opcional, valor inteiro positivo
-
-### Tratamento de Erros
-- **404 Not Found**: Quando aventureiro não existe
-- **400 Bad Request**: Para dados inválidos ou violação de validações
-- **500 Internal Server Error**: Para erros internos do sistema
-
----
+Este comando irá executar todos os testes unitários e de integração, utilizando a configuração de banco de dados H2.
