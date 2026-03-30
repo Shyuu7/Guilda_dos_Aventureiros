@@ -4,7 +4,6 @@ import br.com.infnet.guilda_dos_aventureiros.entities.audit.Organization;
 import br.com.infnet.guilda_dos_aventureiros.enums.aventura.NivelPerigo;
 import br.com.infnet.guilda_dos_aventureiros.enums.aventura.StatusMissao;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;

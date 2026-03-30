@@ -3,7 +3,6 @@ package br.com.infnet.guilda_dos_aventureiros.entities.aventura;
 import br.com.infnet.guilda_dos_aventureiros.enums.aventura.PapelMissao;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
