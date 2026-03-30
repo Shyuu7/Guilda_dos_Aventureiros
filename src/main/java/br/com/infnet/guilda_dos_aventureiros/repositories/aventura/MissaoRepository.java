@@ -51,8 +51,8 @@ public interface MissaoRepository extends JpaRepository<Missao, Long> {
             aventura.participacoes_missoes p ON m.id = p.missao_id
         WHERE
             m.status <> 'CANCELADA'
-            AND m.data_criacao >= COALESCE(:dataMin, '-infinity'::timestamp)
-            AND m.data_criacao <= COALESCE(:dataMax, 'infinity'::timestamp)
+            AND m.data_criacao >= :dataMin
+            AND m.data_criacao <= :dataMax
         GROUP BY
             m.id, m.titulo, m.status, m.nivel_perigo, m.data_inicio
         ORDER BY

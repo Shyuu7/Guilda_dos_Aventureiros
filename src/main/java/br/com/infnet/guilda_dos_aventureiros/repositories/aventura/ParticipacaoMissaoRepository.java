@@ -30,9 +30,9 @@ public interface ParticipacaoMissaoRepository extends JpaRepository<Participacao
         WHERE
             (:status IS NULL OR m.status = CAST(:status AS text))
             AND
-            p.data_registro >= COALESCE(:inicio, '-infinity'::timestamp)
+            p.data_registro >= :inicio
             AND
-            p.data_registro <= COALESCE(:termino, 'infinity'::timestamp)
+            p.data_registro <= :termino
         GROUP BY
             a.id, a.nome
         ORDER BY

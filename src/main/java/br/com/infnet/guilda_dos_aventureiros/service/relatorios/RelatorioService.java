@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,17 +22,31 @@ public class RelatorioService {
     private final ParticipacaoMissaoRepository participacaoMissaoRepository;
 
     public List<RelatorioMissaoProjection> gerarRelatorioMissoes(RelatorioFiltroRequest filtro) {
+        LocalDateTime dataInicio = filtro.inicio() != null
+                ? filtro.inicio()
+                : LocalDateTime.of(1900, 1, 1, 0, 0);
+
+        LocalDateTime dataFim = filtro.termino() != null
+                ? filtro.termino()
+                : LocalDateTime.of(2099, 12, 31, 23, 59);
         return missaoRepository.gerarRelatorioMissoes(
-                filtro.inicio(),
-                filtro.termino()
+                dataInicio,
+                dataFim
         );
     }
 
     public List<RankingProjection> gerarRankingAventureiros(RankingFiltroRequest filtro) {
         String statusAsString = (filtro.status() != null) ? filtro.status().name() : null;
+        LocalDateTime dataInicio = filtro.inicio() != null
+                ? filtro.inicio()
+                : LocalDateTime.of(1900, 1, 1, 0, 0);
+
+        LocalDateTime dataFim = filtro.termino() != null
+                ? filtro.termino()
+                : LocalDateTime.of(2099, 12, 31, 23, 59);
         return participacaoMissaoRepository.gerarRankingAventureiros(
-                filtro.inicio(),
-                filtro.termino(),
+                dataInicio,
+                dataFim,
                 statusAsString
         );
     }
