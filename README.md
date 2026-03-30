@@ -1,3 +1,5 @@
+<img width="1080" height="500" alt="Untitled" src="https://github.com/user-attachments/assets/f36bba3a-7e8a-470c-9e9d-86327d10e670" />
+
 # Sistema de Registro da Guilda de Aventureiros
 
 ## Sobre o Projeto
