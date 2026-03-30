@@ -1,12 +1,11 @@
 package br.com.infnet.guilda_dos_aventureiros.entities.aventura;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParticipacaoMissaoId implements Serializable {
