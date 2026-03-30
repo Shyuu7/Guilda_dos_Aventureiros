@@ -42,7 +42,7 @@ public interface MissaoRepository extends JpaRepository<Missao, Long> {
             m.titulo as titulo,
             m.status as status,
             m.nivel_perigo as nivelPerigo,
-            m.data_inicio as dataInicio,
+            m.data_criacao as dataCriacao,
             COUNT(p.aventureiro_id) as quantidadeParticipantes,
             COALESCE(SUM(p.recompensa_ouro), 0.0) as totalRecompensas
         FROM
@@ -54,9 +54,9 @@ public interface MissaoRepository extends JpaRepository<Missao, Long> {
             AND m.data_criacao >= :dataMin
             AND m.data_criacao <= :dataMax
         GROUP BY
-            m.id, m.titulo, m.status, m.nivel_perigo, m.data_inicio
+            m.id, m.titulo, m.status, m.nivel_perigo, m.data_criacao
         ORDER BY
-            m.data_inicio DESC
+            m.data_criacao DESC
         """, nativeQuery = true)
     List<RelatorioMissaoProjection> gerarRelatorioMissoes(
             @Param("dataMin") LocalDateTime dataMin,
