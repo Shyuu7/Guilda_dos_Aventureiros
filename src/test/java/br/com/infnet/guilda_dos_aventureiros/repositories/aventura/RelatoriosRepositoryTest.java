@@ -46,17 +46,13 @@ class RelatoriosRepositoryTest {
     @Test
     @DisplayName("Deve gerar ranking de aventureiros corretamente")
     void gerarRankingAventureirosTest() {
-        // Arrange
         LocalDateTime inicio = LocalDateTime.of(1900, 1, 1, 0, 0);
         LocalDateTime fim = LocalDateTime.of(2099, 12, 31, 23, 59);
 
-        // Act
         List<RankingProjection> ranking = participacaoMissaoRepository.gerarRankingAventureiros(inicio, fim, null);
 
-        // Assert
         assertThat(ranking).isNotEmpty();
 
-        // Verifica o primeiro do ranking
         RankingProjection primeiroLugar = ranking.getFirst();
         assertThat(primeiroLugar.getNomeAventureiro()).isEqualTo("Aragorn");
         assertThat(primeiroLugar.getTotalRecompensas()).isEqualByComparingTo(new BigDecimal("3500.00"));

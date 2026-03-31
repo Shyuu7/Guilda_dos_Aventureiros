@@ -34,10 +34,8 @@ class AventureiroRepositoryTest {
     @Test
     @DisplayName("Deve buscar aventureiro por nome (parcial e case-insensitive)")
     void findByNomeContainingIgnoreCaseTest() {
-        // Act
         Page<Aventureiro> resultado = aventureiroRepository.findByNomeContainingIgnoreCase("gorn", PageRequest.of(0, 10));
 
-        // Assert
         assertThat(resultado.getTotalElements()).isEqualTo(1);
         assertThat(resultado.getContent().getFirst().getNome()).isEqualTo("Aragorn");
     }
@@ -45,11 +43,9 @@ class AventureiroRepositoryTest {
     @Test
     @DisplayName("Deve listar aventureiros com filtro por classe e status")
     void findByFiltrosTest() {
-        // Act
         Page<AventureiroResumoResponse> guerreirosAtivos = aventureiroRepository.findByStatusAndClasseAndNivelMinimo(true, AventureiroClasses.GUERREIRO, null, PageRequest.of(0, 10));
         Page<AventureiroResumoResponse> todosInativos = aventureiroRepository.findByStatusAndClasseAndNivelMinimo(false, null, null, PageRequest.of(0, 10));
 
-        // Assert
         assertThat(guerreirosAtivos.getTotalElements()).isEqualTo(32L);
         assertThat(guerreirosAtivos.getContent().getFirst().nome()).isEqualTo("Aragorn");
 
