@@ -1,6 +1,8 @@
 package br.com.infnet.guilda_dos_aventureiros.service.operacoes;
 
+import br.com.infnet.guilda_dos_aventureiros.dto.operacoes.PainelTaticoMissaoDTO;
 import br.com.infnet.guilda_dos_aventureiros.entities.operacoes.PainelTaticoMissao;
+import br.com.infnet.guilda_dos_aventureiros.mapper.PainelTaticoMissaoMapper;
 import br.com.infnet.guilda_dos_aventureiros.repositories.operacoes.PainelTaticoMissaoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,16 +25,21 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PainelTaticoServiceTest {
+class PainelTaticoMissaoServiceTest {
 
     @Mock
     private PainelTaticoMissaoRepository painelTaticoMissaoRepository;
 
+    @Mock
+    private PainelTaticoMissaoMapper painelTaticoMissaoMapper;
+
     @InjectMocks
-    private PainelTaticoService painelTaticoService;
+    private PainelTaticoMissaoService painelTaticoMissaoService;
 
     private PainelTaticoMissao missaoFalsa;
     private PainelTaticoMissao missaoFalsa2;
+    private PainelTaticoMissaoDTO missaoDtoFalsa;
+    private PainelTaticoMissaoDTO missaoDtoFalsa2;
 
     @BeforeEach
     void setUp() {
@@ -47,33 +54,47 @@ class PainelTaticoServiceTest {
         missaoFalsa2.setTitulo("Segunda Missão de Teste");
         missaoFalsa2.setIndiceProntidao(85.0);
         missaoFalsa2.setUltimaAtualizacao(LocalDateTime.of(2026,3,30,12,0));
+
+        missaoDtoFalsa = new PainelTaticoMissaoDTO();
+        missaoDtoFalsa.setMissaoId(1L);
+        missaoDtoFalsa.setTitulo("Primeira Missão de Teste");
+        missaoDtoFalsa.setIndiceProntidao(99.5);
+
+        missaoDtoFalsa2 = new PainelTaticoMissaoDTO();
+        missaoDtoFalsa2.setMissaoId(2L);
+        missaoDtoFalsa2.setTitulo("Segunda Missão de Teste");
+        missaoDtoFalsa2.setIndiceProntidao(85.0);
     }
 
     @Test
-    @DisplayName("Deve retornar a lista de missões do repositório com sucesso, ordenada por índice de prontidão")
-    void findTopMissoesUltimos15Dias_deveRetornarListaDeMissoes() {
+    @DisplayName("Deve retornar a lista de missões DTO do repositório com sucesso, ordenada por índice de prontidão")
+    void findTopMissoesUltimos15Dias_deveRetornarListaDeMissoesDTO() {
         List<PainelTaticoMissao> listaDeMissoesFalsas = List.of(missaoFalsa, missaoFalsa2);
 
         when(painelTaticoMissaoRepository.findTop10ByUltimaAtualizacaoBetweenOrderByIndiceProntidaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(listaDeMissoesFalsas);
+        when(painelTaticoMissaoMapper.toDto(missaoFalsa)).thenReturn(missaoDtoFalsa);
+        when(painelTaticoMissaoMapper.toDto(missaoFalsa2)).thenReturn(missaoDtoFalsa2);
 
-       List<PainelTaticoMissao> resultado = painelTaticoService.findTopMissoesUltimos15Dias();
+        List<PainelTaticoMissaoDTO> resultado = painelTaticoMissaoService.findTopMissoesUltimos15Dias();
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
 
-        PainelTaticoMissao primeiraMissao = resultado.getFirst();
+        PainelTaticoMissaoDTO primeiraMissao = resultado.getFirst();
 
         assertEquals(1L, primeiraMissao.getMissaoId());
         assertEquals("Primeira Missão de Teste", primeiraMissao.getTitulo());
         assertEquals(99.5, primeiraMissao.getIndiceProntidao());
 
-        PainelTaticoMissao segundaMissao = resultado.get(1);
+        PainelTaticoMissaoDTO segundaMissao = resultado.get(1);
         assertEquals(2L, segundaMissao.getMissaoId());
         assertEquals("Segunda Missão de Teste", segundaMissao.getTitulo());
         assertEquals(85.0, segundaMissao.getIndiceProntidao());
 
         verify(painelTaticoMissaoRepository).findTop10ByUltimaAtualizacaoBetweenOrderByIndiceProntidaoDesc(any(LocalDateTime.class), any(LocalDateTime.class));
+        verify(painelTaticoMissaoMapper).toDto(missaoFalsa);
+        verify(painelTaticoMissaoMapper).toDto(missaoFalsa2);
     }
 
     @Test
@@ -85,7 +106,7 @@ class PainelTaticoServiceTest {
         when(painelTaticoMissaoRepository.findTop10ByUltimaAtualizacaoBetweenOrderByIndiceProntidaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(List.of(missaoFalsa, missaoFalsa2));
 
-        painelTaticoService.findTopMissoesUltimos15Dias();
+        painelTaticoMissaoService.findTopMissoesUltimos15Dias();
 
         verify(painelTaticoMissaoRepository).findTop10ByUltimaAtualizacaoBetweenOrderByIndiceProntidaoDesc(
                 dataInicioCaptor.capture(),
@@ -111,7 +132,7 @@ class PainelTaticoServiceTest {
     void findTopMissoesUltimos15Dias_deveRetornarListaVazia() {
         when(painelTaticoMissaoRepository.findTop10ByUltimaAtualizacaoBetweenOrderByIndiceProntidaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(Collections.emptyList());
-        List<PainelTaticoMissao> resultado = painelTaticoService.findTopMissoesUltimos15Dias();
+        List<PainelTaticoMissaoDTO> resultado = painelTaticoMissaoService.findTopMissoesUltimos15Dias();
         assertNotNull(resultado);
         assertEquals(0, resultado.size());
     }
