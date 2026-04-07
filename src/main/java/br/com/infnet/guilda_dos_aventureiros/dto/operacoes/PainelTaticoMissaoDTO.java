@@ -1,10 +1,12 @@
 package br.com.infnet.guilda_dos_aventureiros.dto.operacoes;
 
 import lombok.Data;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class PainelTaticoMissaoDTO {
+public class PainelTaticoMissaoDTO implements Serializable {
     private Long missaoId;
     private String titulo;
     private String status;
