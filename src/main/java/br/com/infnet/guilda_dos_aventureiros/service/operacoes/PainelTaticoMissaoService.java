@@ -16,6 +16,8 @@ public class PainelTaticoMissaoService {
     private final PainelTaticoMissaoRepository painelTaticoMissaoRepository;
     private final PainelTaticoMissaoMapper painelTaticoMissaoMapper;
 
+    /*Usando o cache do redis aqui pois diminui o tempo de resposta nas chamadas subsequentes,
+    visto que apenas a primeira chamada a cada 5 minutos irá bater no banco; de resto, irá diretamente ao cache e prontamente retornada*/
     @Cacheable("topMissoes")
     public List<PainelTaticoMissaoDTO> findTopMissoesUltimos15Dias() {
         LocalDateTime fim = LocalDateTime.now();

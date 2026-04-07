@@ -4,13 +4,15 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Subselect;
 import org.hibernate.annotations.Synchronize;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Subselect("SELECT * FROM operacoes.vw_painel_tatico_missao")
 @Synchronize({"operacoes.vw_painel_tatico_missao"})
