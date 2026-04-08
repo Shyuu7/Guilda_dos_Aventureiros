@@ -42,4 +42,30 @@ public class LojaController {
     public ResponseEntity<List<ItemLoja>> buscarEmMultiplosCampos(@RequestParam String termo) {
         return ResponseEntity.ok(lojaService.buscarEmMultiplosCampos(termo));
     }
+
+    @GetMapping("/com-filtro")
+    public ResponseEntity<List<ItemLoja>> buscarComFiltro(
+            @RequestParam String termo,
+            @RequestParam String categoria
+    ) {
+        return ResponseEntity.ok(lojaService.buscarPorDescricaoFiltrarCategoria(termo, categoria));
+    }
+
+    @GetMapping("/faixa-preco")
+    public ResponseEntity<List<ItemLoja>> buscarPorFaixaDePreco(
+            @RequestParam Double min,
+            @RequestParam Double max
+    ) {
+        return ResponseEntity.ok(lojaService.buscarPorFaixaDePreco(min, max));
+    }
+
+    @GetMapping("/combinada")
+    public ResponseEntity<List<ItemLoja>> buscaCombinada(
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) String raridade,
+            @RequestParam(required = false) Double min,
+            @RequestParam(required = false) Double max
+    ) {
+        return ResponseEntity.ok(lojaService.buscaCombinada(categoria, raridade, min, max));
+    }
 }

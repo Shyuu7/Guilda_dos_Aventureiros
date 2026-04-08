@@ -1,7 +1,9 @@
 package br.com.infnet.guilda_dos_aventureiros.service.loja;
 
 import br.com.infnet.guilda_dos_aventureiros.entities.loja.ItemLoja;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.json.JsonData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -69,6 +71,79 @@ public class LojaService {
         );
         return executarQuery(query);
     }
+
+    public List<ItemLoja> buscarPorDescricaoFiltrarCategoria(String termo, String categoria) {
+        Query query = Query.of(q -> q
+                .bool(b -> b
+                        .must(m -> m
+                                .match(mm -> mm
+                                        .field("descricao")
+                                        .query(termo)
+                                )
+                        )
+                        .filter(f -> f
+                                .term(t -> t
+                                        .field("categoria")
+                                        .value(categoria)
+                                )
+                        )
+                )
+        );
+        return executarQuery(query);
+    }
+
+    public List<ItemLoja> buscarPorFaixaDePreco(Double min, Double max) {
+        Query priceRangeQuery = Query.of(q -> q
+                .range(r -> r
+                        .number(n -> n
+                                .field("preco")
+                                .lte(max)
+                                .gte(min)
+                        )
+                )
+        );
+        return executarQuery(priceRangeQuery);
+    }
+
+    public List<ItemLoja> buscaCombinada(String categoria, String raridade, Double min, Double max) {
+        BoolQuery.Builder boolQuery = new BoolQuery.Builder();
+
+        if (categoria != null && !categoria.isEmpty()) {
+            boolQuery.filter(f -> f
+                    .term(t -> t
+                            .field("categoria")
+                            .value(categoria)));
+        }
+
+        if (raridade != null && !raridade.isEmpty()) {
+            boolQuery.filter(f -> f
+                    .term(t -> t
+                            .field("raridade")
+                            .value(raridade)));
+        }
+
+        if (min != null || max != null) {
+            boolQuery.filter(f -> f
+                    .range(r -> r
+                            .number(n -> {
+                                n.field("preco");
+                                if (min != null) {
+                                    n.gte(min);
+                                }
+                                if (max != null) {
+                                    n.lte(max);
+                                }
+                                return n;
+                            })
+                    ));
+        }
+        Query query = Query.of(q -> q
+                .bool(boolQuery.build()));
+
+        return executarQuery(query);
+    }
+
+
 
     private List<ItemLoja> executarQuery(Query query) {
         NativeQuery nativeQuery = NativeQuery.builder()
