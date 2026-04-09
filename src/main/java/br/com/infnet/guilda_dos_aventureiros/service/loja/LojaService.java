@@ -3,6 +3,10 @@ package br.com.infnet.guilda_dos_aventureiros.service.loja;
 import br.com.infnet.guilda_dos_aventureiros.dto.loja.ItemLojaDTO;
 import br.com.infnet.guilda_dos_aventureiros.entities.loja.ItemLoja;
 import br.com.infnet.guilda_dos_aventureiros.mapper.loja.ItemLojaMapper;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
+import co.elastic.clients.elasticsearch._types.aggregations.RangeBucket;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
@@ -14,6 +18,8 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +28,7 @@ public class LojaService {
     private final ElasticsearchOperations elasticsearchOperations;
     private final ItemLojaMapper itemLojaMapper;
 
+    //-------Métodos de busca-----------
     public List<ItemLojaDTO> buscarPorNome(String termo) {
         Query query = Query.of(q -> q
                 .match(m -> m
@@ -74,6 +81,7 @@ public class LojaService {
         return executarQuery(query);
     }
 
+    //-------Consultas combinadas-----------
     public List<ItemLojaDTO> buscarPorDescricaoFiltrarCategoria(String termo, String categoria) {
         Query query = Query.of(q -> q
                 .bool(b -> b
@@ -143,6 +151,89 @@ public class LojaService {
                 .bool(boolQuery.build()));
 
         return executarQuery(query);
+    }
+
+
+    //----Agregações e métricas-----------
+    public Map<String, Long> getContagemPorCategoria() {
+        String nomeAgregacao = "contagem_por_categoria";
+        Aggregation agregacao = Aggregation.of(a -> a
+                .terms(t -> t
+                        .field("categoria"))
+        );
+
+        Aggregate aggregate = executarAgregacao(nomeAgregacao, agregacao);
+
+        return aggregate.sterms().buckets().array()
+                .stream()
+                .collect(Collectors.toMap(
+                        b -> b
+                                .key()
+                                .stringValue(),
+                        StringTermsBucket::docCount
+                ));
+    }
+
+    public Map<String, Long> getContagemPorRaridade() {
+        String nomeAgregacao = "contagem_por_raridade";
+        Aggregation agregacao = Aggregation.of(a -> a
+                .terms(t -> t
+                        .field("raridade"))
+        );
+
+        Aggregate aggregate = executarAgregacao(nomeAgregacao, agregacao);
+
+        return aggregate.sterms().buckets().array()
+                .stream()
+                .collect(Collectors.toMap(
+                        b -> b
+                                .key()
+                                .stringValue(),
+                        StringTermsBucket::docCount
+                ));
+    }
+
+    public Double getPrecoMedio() {
+        String nomeAgregacao = "preco_medio";
+        Aggregation agregacao = Aggregation.of(a -> a
+                .avg(avg -> avg
+                        .field("preco"))
+        );
+        Aggregate aggregate = executarAgregacao(nomeAgregacao, agregacao);
+        return aggregate.avg().value();
+    }
+
+    public Map<String, Long> getContagemPorFaixaDePreco() {
+        String nomeAgregacao = "faixas_de_preco";
+        Aggregation agregacao = Aggregation.of(a -> a
+                .range(ra -> ra
+                        .field("preco")
+                        //não sei o que mais colocar aqui
+                )
+        );
+
+        Aggregate aggregate = executarAgregacao(nomeAgregacao, agregacao);
+
+        return aggregate.range().buckets().array()
+                .stream()
+                .collect(Collectors.toMap(
+                        RangeBucket::key,
+                        RangeBucket::docCount
+                ));
+    }
+
+    //-------Métodos auxiliares-----------
+    private Aggregate executarAgregacao(String nomeAgregacao, Aggregation agregacao) {
+        NativeQuery query = NativeQuery.builder()
+                .withQuery(q -> q
+                        .matchAll(m -> m))
+                .withAggregation(nomeAgregacao, agregacao)
+                .withMaxResults(0)
+                .build();
+
+        SearchHits<ItemLoja> searchHits = elasticsearchOperations.search(query, ItemLoja.class);
+        //Como que eu trabalho essa descompactação????????
+        return null;
     }
 
     private List<ItemLojaDTO> executarQuery(Query query) {
