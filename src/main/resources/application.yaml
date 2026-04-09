@@ -22,7 +22,7 @@ spring:
     type: redis
     cache-names: topMissoes
     redis:
-      time-to-live: 5m #Tempo de expiração do cache de 5 minutos
+      time-to-live: 24h
   data:
     redis:
       host: localhost
