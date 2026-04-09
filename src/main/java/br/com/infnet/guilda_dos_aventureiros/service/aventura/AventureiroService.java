@@ -9,7 +9,7 @@ import br.com.infnet.guilda_dos_aventureiros.entities.aventura.Companheiro;
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.ParticipacaoMissao;
 import br.com.infnet.guilda_dos_aventureiros.exceptions.BusinessRuleException;
 import br.com.infnet.guilda_dos_aventureiros.exceptions.EntityNotFoundException;
-import br.com.infnet.guilda_dos_aventureiros.mapper.AventureiroMapper;
+import br.com.infnet.guilda_dos_aventureiros.mapper.aventura.AventureiroMapper;
 import br.com.infnet.guilda_dos_aventureiros.repositories.audit.OrganizationRepository;
 import br.com.infnet.guilda_dos_aventureiros.repositories.audit.UserRepository;
 import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.AventureiroRepository;
