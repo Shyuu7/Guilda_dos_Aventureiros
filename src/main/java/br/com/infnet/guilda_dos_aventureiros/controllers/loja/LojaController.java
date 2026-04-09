@@ -1,6 +1,6 @@
 package br.com.infnet.guilda_dos_aventureiros.controllers.loja;
 
-import br.com.infnet.guilda_dos_aventureiros.entities.loja.ItemLoja;
+import br.com.infnet.guilda_dos_aventureiros.dto.loja.ItemLojaDTO;
 import br.com.infnet.guilda_dos_aventureiros.service.loja.LojaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,32 +19,32 @@ public class LojaController {
     private final LojaService lojaService;
 
     @GetMapping("/nome")
-    public ResponseEntity<List<ItemLoja>> buscarPorNome(@RequestParam String termo) {
+    public ResponseEntity<List<ItemLojaDTO>> buscarPorNome(@RequestParam String termo) {
         return ResponseEntity.ok(lojaService.buscarPorNome(termo));
     }
 
     @GetMapping("/descricao")
-    public ResponseEntity<List<ItemLoja>> buscarPorDescricao(@RequestParam String termo) {
+    public ResponseEntity<List<ItemLojaDTO>> buscarPorDescricao(@RequestParam String termo) {
         return ResponseEntity.ok(lojaService.buscarPorDescricao(termo));
     }
 
     @GetMapping("/frase")
-    public ResponseEntity<List<ItemLoja>> buscarPorFrase(@RequestParam String termo) {
+    public ResponseEntity<List<ItemLojaDTO>> buscarPorFrase(@RequestParam String termo) {
         return ResponseEntity.ok(lojaService.buscarPorFraseExata(termo));
     }
 
     @GetMapping("/fuzzy")
-    public ResponseEntity<List<ItemLoja>> buscarPorNomeFuzzy(@RequestParam String termo) {
+    public ResponseEntity<List<ItemLojaDTO>> buscarPorNomeFuzzy(@RequestParam String termo) {
         return ResponseEntity.ok(lojaService.buscarPorNomeFuzzy(termo));
     }
 
     @GetMapping("/multicampos")
-    public ResponseEntity<List<ItemLoja>> buscarEmMultiplosCampos(@RequestParam String termo) {
+    public ResponseEntity<List<ItemLojaDTO>> buscarEmMultiplosCampos(@RequestParam String termo) {
         return ResponseEntity.ok(lojaService.buscarEmMultiplosCampos(termo));
     }
 
     @GetMapping("/com-filtro")
-    public ResponseEntity<List<ItemLoja>> buscarComFiltro(
+    public ResponseEntity<List<ItemLojaDTO>> buscarComFiltro(
             @RequestParam String termo,
             @RequestParam String categoria
     ) {
@@ -52,7 +52,7 @@ public class LojaController {
     }
 
     @GetMapping("/faixa-preco")
-    public ResponseEntity<List<ItemLoja>> buscarPorFaixaDePreco(
+    public ResponseEntity<List<ItemLojaDTO>> buscarPorFaixaDePreco(
             @RequestParam Double min,
             @RequestParam Double max
     ) {
@@ -60,7 +60,7 @@ public class LojaController {
     }
 
     @GetMapping("/combinada")
-    public ResponseEntity<List<ItemLoja>> buscaCombinada(
+    public ResponseEntity<List<ItemLojaDTO>> buscaCombinada(
             @RequestParam(required = false) String categoria,
             @RequestParam(required = false) String raridade,
             @RequestParam(required = false) Double min,

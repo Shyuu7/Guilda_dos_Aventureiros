@@ -1,9 +1,11 @@
 package br.com.infnet.guilda_dos_aventureiros.service.loja;
 
+import br.com.infnet.guilda_dos_aventureiros.dto.loja.ItemLojaDTO;
 import br.com.infnet.guilda_dos_aventureiros.entities.loja.ItemLoja;
+import br.com.infnet.guilda_dos_aventureiros.mapper.loja.ItemLojaMapper;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.json.JsonData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -13,15 +15,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-//TODO: implementar DTOs para evitar expor a entidade diretamente e permitir transformações futuras sem quebrar a API
-
 @Service
 @RequiredArgsConstructor
 public class LojaService {
 
     private final ElasticsearchOperations elasticsearchOperations;
+    private final ItemLojaMapper itemLojaMapper;
 
-    public List<ItemLoja> buscarPorNome(String termo) {
+    public List<ItemLojaDTO> buscarPorNome(String termo) {
         Query query = Query.of(q -> q
                 .match(m -> m
                         .field("nome")
@@ -31,17 +32,18 @@ public class LojaService {
         return executarQuery(query);
     }
 
-    public List<ItemLoja> buscarPorDescricao(String termo) {
+    public List<ItemLojaDTO> buscarPorDescricao(String termo) {
         Query query = Query.of(q -> q
                 .match(m -> m
                         .field("descricao")
                         .query(termo)
+                        .operator(Operator.And)
                 )
         );
         return executarQuery(query);
     }
 
-    public List<ItemLoja> buscarPorFraseExata(String termo) {
+    public List<ItemLojaDTO> buscarPorFraseExata(String termo) {
         Query query = Query.of(q -> q
                 .matchPhrase(mp -> mp
                         .field("descricao")
@@ -51,7 +53,7 @@ public class LojaService {
         return executarQuery(query);
     }
 
-    public List<ItemLoja> buscarPorNomeFuzzy(String termo) {
+    public List<ItemLojaDTO> buscarPorNomeFuzzy(String termo) {
         Query query = Query.of(q -> q
                 .fuzzy(f -> f
                         .field("nome")
@@ -62,7 +64,7 @@ public class LojaService {
         return executarQuery(query);
     }
 
-    public List<ItemLoja> buscarEmMultiplosCampos(String termo) {
+    public List<ItemLojaDTO> buscarEmMultiplosCampos(String termo) {
         Query query = Query.of(q -> q
                 .multiMatch(mm -> mm
                         .fields("nome", "descricao")
@@ -72,7 +74,7 @@ public class LojaService {
         return executarQuery(query);
     }
 
-    public List<ItemLoja> buscarPorDescricaoFiltrarCategoria(String termo, String categoria) {
+    public List<ItemLojaDTO> buscarPorDescricaoFiltrarCategoria(String termo, String categoria) {
         Query query = Query.of(q -> q
                 .bool(b -> b
                         .must(m -> m
@@ -92,7 +94,7 @@ public class LojaService {
         return executarQuery(query);
     }
 
-    public List<ItemLoja> buscarPorFaixaDePreco(Double min, Double max) {
+    public List<ItemLojaDTO> buscarPorFaixaDePreco(Double min, Double max) {
         Query priceRangeQuery = Query.of(q -> q
                 .range(r -> r
                         .number(n -> n
@@ -105,7 +107,7 @@ public class LojaService {
         return executarQuery(priceRangeQuery);
     }
 
-    public List<ItemLoja> buscaCombinada(String categoria, String raridade, Double min, Double max) {
+    public List<ItemLojaDTO> buscaCombinada(String categoria, String raridade, Double min, Double max) {
         BoolQuery.Builder boolQuery = new BoolQuery.Builder();
 
         if (categoria != null && !categoria.isEmpty()) {
@@ -143,16 +145,16 @@ public class LojaService {
         return executarQuery(query);
     }
 
-
-
-    private List<ItemLoja> executarQuery(Query query) {
+    private List<ItemLojaDTO> executarQuery(Query query) {
         NativeQuery nativeQuery = NativeQuery.builder()
                 .withQuery(query)
                 .build();
 
         SearchHits<ItemLoja> searchHits = elasticsearchOperations.search(nativeQuery, ItemLoja.class);
+
         return searchHits.stream()
                 .map(SearchHit::getContent)
+                .map(itemLojaMapper::toDto)
                 .toList();
     }
 }
