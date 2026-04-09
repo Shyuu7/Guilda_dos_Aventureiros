@@ -1,4 +1,4 @@
-package br.com.infnet.guilda_dos_aventureiros.mapper;
+package br.com.infnet.guilda_dos_aventureiros.mapper.aventura;
 
 import br.com.infnet.guilda_dos_aventureiros.dto.audit.OrganizationResponse;
 import br.com.infnet.guilda_dos_aventureiros.dto.audit.UserResponse;

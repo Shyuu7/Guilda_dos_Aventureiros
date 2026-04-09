@@ -5,7 +5,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password: apppass
+    password: postpass
   jpa:
     hibernate:
       ddl-auto: validate
@@ -18,3 +18,14 @@ spring:
     enabled: true
     schemas: aventura
     locations: classpath:db/migration
+  cache:
+    type: redis
+    cache-names: topMissoes
+    redis:
+      time-to-live: 24h
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  elasticsearch:
+    uris: http://localhost:9200

@@ -8,7 +8,7 @@ import br.com.infnet.guilda_dos_aventureiros.entities.aventura.ParticipacaoMissa
 import br.com.infnet.guilda_dos_aventureiros.entities.aventura.ParticipacaoMissaoId;
 import br.com.infnet.guilda_dos_aventureiros.enums.aventura.StatusMissao;
 import br.com.infnet.guilda_dos_aventureiros.exceptions.BusinessRuleException;
-import br.com.infnet.guilda_dos_aventureiros.mapper.MissaoMapper;
+import br.com.infnet.guilda_dos_aventureiros.mapper.aventura.MissaoMapper;
 import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.AventureiroRepository;
 import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.MissaoRepository;
 import br.com.infnet.guilda_dos_aventureiros.repositories.aventura.ParticipacaoMissaoRepository;
