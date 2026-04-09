@@ -3,23 +3,22 @@ package br.com.infnet.guilda_dos_aventureiros.service.loja;
 import br.com.infnet.guilda_dos_aventureiros.dto.loja.ItemLojaDTO;
 import br.com.infnet.guilda_dos_aventureiros.entities.loja.ItemLoja;
 import br.com.infnet.guilda_dos_aventureiros.mapper.loja.ItemLojaMapper;
-import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
-import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
-import co.elastic.clients.elasticsearch._types.aggregations.RangeBucket;
-import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
+import co.elastic.clients.elasticsearch._types.aggregations.*;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregations;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -155,87 +154,117 @@ public class LojaService {
 
 
     //----Agregações e métricas-----------
-    public Map<String, Long> getContagemPorCategoria() {
-        String nomeAgregacao = "contagem_por_categoria";
-        Aggregation agregacao = Aggregation.of(a -> a
-                .terms(t -> t
-                        .field("categoria"))
-        );
-
-        Aggregate aggregate = executarAgregacao(nomeAgregacao, agregacao);
-
-        return aggregate.sterms().buckets().array()
-                .stream()
-                .collect(Collectors.toMap(
-                        b -> b
-                                .key()
-                                .stringValue(),
-                        StringTermsBucket::docCount
-                ));
-    }
-
-    public Map<String, Long> getContagemPorRaridade() {
-        String nomeAgregacao = "contagem_por_raridade";
-        Aggregation agregacao = Aggregation.of(a -> a
-                .terms(t -> t
-                        .field("raridade"))
-        );
-
-        Aggregate aggregate = executarAgregacao(nomeAgregacao, agregacao);
-
-        return aggregate.sterms().buckets().array()
-                .stream()
-                .collect(Collectors.toMap(
-                        b -> b
-                                .key()
-                                .stringValue(),
-                        StringTermsBucket::docCount
-                ));
-    }
-
-    public Double getPrecoMedio() {
-        String nomeAgregacao = "preco_medio";
-        Aggregation agregacao = Aggregation.of(a -> a
-                .avg(avg -> avg
-                        .field("preco"))
-        );
-        Aggregate aggregate = executarAgregacao(nomeAgregacao, agregacao);
-        return aggregate.avg().value();
-    }
-
-    public Map<String, Long> getContagemPorFaixaDePreco() {
-        String nomeAgregacao = "faixas_de_preco";
-        Aggregation agregacao = Aggregation.of(a -> a
-                .range(ra -> ra
-                        .field("preco")
-                        //não sei o que mais colocar aqui
-                )
-        );
-
-        Aggregate aggregate = executarAgregacao(nomeAgregacao, agregacao);
-
-        return aggregate.range().buckets().array()
-                .stream()
-                .collect(Collectors.toMap(
-                        RangeBucket::key,
-                        RangeBucket::docCount
-                ));
-    }
-
-    //-------Métodos auxiliares-----------
-    private Aggregate executarAgregacao(String nomeAgregacao, Aggregation agregacao) {
+    public Map<String, Long> contarPorCategoria() {
         NativeQuery query = NativeQuery.builder()
-                .withQuery(q -> q
-                        .matchAll(m -> m))
-                .withAggregation(nomeAgregacao, agregacao)
+                .withAggregation("categorias",
+                        Aggregation.of(a -> a
+                                .terms(t -> t
+                                        .field("categoria"))))
                 .withMaxResults(0)
                 .build();
 
         SearchHits<ItemLoja> searchHits = elasticsearchOperations.search(query, ItemLoja.class);
-        //Como que eu trabalho essa descompactação????????
-        return null;
+        Map<String, Long> resultado = new HashMap<>();
+
+        if (searchHits.hasAggregations()) {
+            ElasticsearchAggregations aggregations = (ElasticsearchAggregations) searchHits.getAggregations();
+            assert aggregations != null;
+            Objects.requireNonNull(aggregations.get("categorias")).aggregation()
+                    .getAggregate()
+                    .sterms()
+                    .buckets()
+                    .array()
+                    .forEach(bucket -> resultado
+                            .put(bucket
+                                    .key()
+                                    .stringValue(), bucket.docCount()));
+        }
+
+        return resultado;
     }
 
+    public Map<String, Long> contarPorRaridade() {
+        NativeQuery query = NativeQuery.builder()
+                .withAggregation("raridades",
+                        Aggregation.of(a -> a
+                                .terms(t -> t
+                                        .field("raridade"))))
+                .withMaxResults(0)
+                .build();
+
+        SearchHits<ItemLoja> searchHits = elasticsearchOperations.search(query, ItemLoja.class);
+        Map<String, Long> resultado = new HashMap<>();
+
+        if (searchHits.hasAggregations()) {
+            ElasticsearchAggregations aggregations = (ElasticsearchAggregations) searchHits.getAggregations();
+
+            aggregations.get("raridades").aggregation()
+                    .getAggregate()
+                    .sterms()
+                    .buckets()
+                    .array()
+                    .forEach(bucket -> resultado
+                            .put(bucket.key()
+                                    .stringValue(), bucket.docCount()));
+        }
+
+        return resultado;
+    }
+
+    public Double calcularPrecoMedio() {
+        NativeQuery query = NativeQuery.builder()
+                .withAggregation("preco_medio",
+                        Aggregation.of(a -> a.avg(avg -> avg.field("preco"))))
+                .withMaxResults(0)
+                .build();
+
+        SearchHits<ItemLoja> searchHits = elasticsearchOperations.search(query, ItemLoja.class);
+
+        if (searchHits.hasAggregations()) {
+            ElasticsearchAggregations aggregations = (ElasticsearchAggregations) searchHits.getAggregations();
+            return aggregations.get("preco_medio").aggregation()
+                    .getAggregate()
+                    .avg()
+                    .value();
+        }
+        return 0.0;
+    }
+
+    public Map<String, Long> agruparPorFaixaPreco() {
+        NativeQuery query = NativeQuery.builder()
+                .withAggregation("faixas",
+                        Aggregation.of(a -> a.range(r -> r
+                                .field("preco")
+                                .ranges(List.of(
+                                        AggregationRange.of(rr -> rr.to(100.00)),
+                                        AggregationRange.of(rr -> rr.from(100.00).to(300.00)),
+                                        AggregationRange.of(rr -> rr.from(300.00).to(700.00)),
+                                        AggregationRange.of(rr -> rr.from(700.00))
+                                ))
+                        )))
+                .withMaxResults(0)
+                .build();
+
+        SearchHits<ItemLoja> searchHits = elasticsearchOperations.search(query, ItemLoja.class);
+        Map<String, Long> resultado = new HashMap<>();
+
+        if (searchHits.hasAggregations()) {
+            ElasticsearchAggregations aggregations = (ElasticsearchAggregations) searchHits.getAggregations();
+            var buckets = aggregations.get("faixas").aggregation()
+                    .getAggregate()
+                    .range()
+                    .buckets()
+                    .array();
+
+            resultado.put("abaixo_de_100", buckets.get(0).docCount());
+            resultado.put("de_100_a_300", buckets.get(1).docCount());
+            resultado.put("de_300_a_700", buckets.get(2).docCount());
+            resultado.put("acima_de_700", buckets.get(3).docCount());
+        }
+        return resultado;
+    }
+
+    //-------Métodos auxiliares-----------
     private List<ItemLojaDTO> executarQuery(Query query) {
         NativeQuery nativeQuery = NativeQuery.builder()
                 .withQuery(query)
