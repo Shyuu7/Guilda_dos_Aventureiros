@@ -1,7 +1,8 @@
 package br.com.infnet.guilda_dos_aventureiros.controllers.loja;
 
 import br.com.infnet.guilda_dos_aventureiros.dto.loja.ItemLojaDTO;
-import br.com.infnet.guilda_dos_aventureiros.service.loja.LojaService;
+import br.com.infnet.guilda_dos_aventureiros.service.loja.LojaAnalyticsService;
+import br.com.infnet.guilda_dos_aventureiros.service.loja.LojaSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,31 +18,32 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LojaController {
 
-    private final LojaService lojaService;
+    private final LojaSearchService lojaSearchService;
+    private final LojaAnalyticsService lojaAnalyticsService;
 
     @GetMapping("/busca/nome")
     public ResponseEntity<List<ItemLojaDTO>> buscarPorNome(@RequestParam String termo) {
-        return ResponseEntity.ok(lojaService.buscarPorNome(termo));
+        return ResponseEntity.ok(lojaSearchService.buscarPorNome(termo));
     }
 
     @GetMapping("/busca/descricao")
     public ResponseEntity<List<ItemLojaDTO>> buscarPorDescricao(@RequestParam String termo) {
-        return ResponseEntity.ok(lojaService.buscarPorDescricao(termo));
+        return ResponseEntity.ok(lojaSearchService.buscarPorDescricao(termo));
     }
 
     @GetMapping("/busca/frase")
     public ResponseEntity<List<ItemLojaDTO>> buscarPorFrase(@RequestParam String termo) {
-        return ResponseEntity.ok(lojaService.buscarPorFraseExata(termo));
+        return ResponseEntity.ok(lojaSearchService.buscarPorFraseExata(termo));
     }
 
     @GetMapping("/busca/fuzzy")
     public ResponseEntity<List<ItemLojaDTO>> buscarPorNomeFuzzy(@RequestParam String termo) {
-        return ResponseEntity.ok(lojaService.buscarPorNomeFuzzy(termo));
+        return ResponseEntity.ok(lojaSearchService.buscarPorNomeFuzzy(termo));
     }
 
     @GetMapping("/busca/multicampos")
     public ResponseEntity<List<ItemLojaDTO>> buscarEmMultiplosCampos(@RequestParam String termo) {
-        return ResponseEntity.ok(lojaService.buscarEmMultiplosCampos(termo));
+        return ResponseEntity.ok(lojaSearchService.buscarEmMultiplosCampos(termo));
     }
 
     @GetMapping("/busca/com-filtro")
@@ -49,7 +51,7 @@ public class LojaController {
             @RequestParam String termo,
             @RequestParam String categoria
     ) {
-        return ResponseEntity.ok(lojaService.buscarPorDescricaoFiltrarCategoria(termo, categoria));
+        return ResponseEntity.ok(lojaSearchService.buscarPorDescricaoFiltrarCategoria(termo, categoria));
     }
 
     @GetMapping("/busca/faixa-preco")
@@ -57,37 +59,37 @@ public class LojaController {
             @RequestParam Double min,
             @RequestParam Double max
     ) {
-        return ResponseEntity.ok(lojaService.buscarPorFaixaDePreco(min, max));
+        return ResponseEntity.ok(lojaSearchService.buscarPorFaixaDePreco(min, max));
     }
 
-    @GetMapping("/combinada")
+    @GetMapping("/busca/combinada")
     public ResponseEntity<List<ItemLojaDTO>> buscaCombinada(
             @RequestParam(required = false) String categoria,
             @RequestParam(required = false) String raridade,
             @RequestParam(required = false) Double min,
             @RequestParam(required = false) Double max
     ) {
-        return ResponseEntity.ok(lojaService.buscaCombinada(categoria, raridade, min, max));
+        return ResponseEntity.ok(lojaSearchService.buscaCombinada(categoria, raridade, min, max));
     }
 
     // --- Endpoints de Agregação ---
     @GetMapping("/agregacoes/por-categoria")
     public ResponseEntity<Map<String, Long>> getContagemPorCategoria() {
-        return ResponseEntity.ok(lojaService.contarPorCategoria());
+        return ResponseEntity.ok(lojaAnalyticsService.contarPorCategoria());
     }
 
     @GetMapping("/agregacoes/por-raridade")
     public ResponseEntity<Map<String, Long>> getContagemPorRaridade() {
-        return ResponseEntity.ok(lojaService.contarPorRaridade());
+        return ResponseEntity.ok(lojaAnalyticsService.contarPorRaridade());
     }
 
     @GetMapping("/agregacoes/preco-medio")
     public ResponseEntity<Double> getPrecoMedio() {
-        return ResponseEntity.ok(lojaService.calcularPrecoMedio());
+        return ResponseEntity.ok(lojaAnalyticsService.calcularPrecoMedio());
     }
 
     @GetMapping("/agregacoes/faixas-preco")
     public ResponseEntity<Map<String, Long>> getContagemPorFaixaDePreco() {
-        return ResponseEntity.ok(lojaService.agruparPorFaixaPreco());
+        return ResponseEntity.ok(lojaAnalyticsService.agruparPorFaixaPreco());
     }
 }
