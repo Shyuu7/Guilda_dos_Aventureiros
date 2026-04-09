@@ -16,9 +16,9 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -169,7 +169,7 @@ public class LojaService {
         if (searchHits.hasAggregations()) {
             ElasticsearchAggregations aggregations = (ElasticsearchAggregations) searchHits.getAggregations();
             assert aggregations != null;
-            Objects.requireNonNull(aggregations.get("categorias")).aggregation()
+            aggregations.get("categorias").aggregation()
                     .getAggregate()
                     .sterms()
                     .buckets()
@@ -236,17 +236,23 @@ public class LojaService {
                         Aggregation.of(a -> a.range(r -> r
                                 .field("preco")
                                 .ranges(List.of(
-                                        AggregationRange.of(rr -> rr.to(100.00)),
-                                        AggregationRange.of(rr -> rr.from(100.00).to(300.00)),
-                                        AggregationRange.of(rr -> rr.from(300.00).to(700.00)),
-                                        AggregationRange.of(rr -> rr.from(700.00))
+                                        AggregationRange.of(rr -> rr
+                                                .to(100.00)),
+                                        AggregationRange.of(rr -> rr
+                                                .from(100.00)
+                                                .to(300.00)),
+                                        AggregationRange.of(rr -> rr
+                                                .from(300.00)
+                                                .to(700.00)),
+                                        AggregationRange.of(rr -> rr
+                                                .from(700.00))
                                 ))
                         )))
                 .withMaxResults(0)
                 .build();
 
         SearchHits<ItemLoja> searchHits = elasticsearchOperations.search(query, ItemLoja.class);
-        Map<String, Long> resultado = new HashMap<>();
+        Map<String, Long> resultado = new LinkedHashMap<>();
 
         if (searchHits.hasAggregations()) {
             ElasticsearchAggregations aggregations = (ElasticsearchAggregations) searchHits.getAggregations();
@@ -256,10 +262,10 @@ public class LojaService {
                     .buckets()
                     .array();
 
-            resultado.put("abaixo_de_100", buckets.get(0).docCount());
-            resultado.put("de_100_a_300", buckets.get(1).docCount());
-            resultado.put("de_300_a_700", buckets.get(2).docCount());
-            resultado.put("acima_de_700", buckets.get(3).docCount());
+            resultado.put("Menor que 100", buckets.get(0).docCount());
+            resultado.put("De 100 a 300", buckets.get(1).docCount());
+            resultado.put("De 300 a 700", buckets.get(2).docCount());
+            resultado.put("Maior ou igual a 700", buckets.get(3).docCount());
         }
         return resultado;
     }
