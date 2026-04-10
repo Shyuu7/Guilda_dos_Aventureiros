@@ -194,6 +194,7 @@ mvn test
 Este comando irá executar todos os testes unitários e de integração, utilizando a configuração de banco de dados H2.
 
 ## Endpoints da API
+A listagem completa dos endpoints desta aplicação pode ser visualizada por uma collection do Postman em https://documenter.getpostman.com/view/37612341/2sBXinHVpn.
 
 ### 🔷 Aventureiros (`/aventureiros`)
 
